@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #333;
+      overflow: hidden;
+      height: 100vh;
+    }
+    
+    .container {
+      padding: 16px;
+      height: calc(100vh - 32px);
+      overflow-y: auto;
+    }
+    
+    .plugin-header {
+      margin-bottom: 24px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 16px;
+    }
+    
+    h1 {
+      margin: 0;
+      font-weight: 600;
+      font-size: 18px;
+      color: #18A0FB;
+    }
+    
+    .subheading {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #666;
+    }
+    
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 2px;
+      font-size: 12px;
+      box-sizing: border-box;
+    }
+    
+    button {
+      background: #18A0FB;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    
+    .tag {
+      background: #E9F5FF;
+      color: #18A0FB;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .tag-remove {
+      margin-left: 4px;
+      cursor: pointer;
+    }
+    
+    .message {
+      padding: 12px;
+      background: #FFFBE6;
+      border-left: 4px solid #FFCC00;
+      margin-bottom: 16px;
+      font-size: 12px;
+    }
+    
+    .layer-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      padding: 8px 12px;
+      background: #F0F0F0;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .layer-icon {
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+      background: #18A0FB;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .layer-icon svg {
+      width: 10px;
+      height: 10px;
+      fill: white;
+    }
+    
+    .url-actions {
+      display: flex;
+      margin-top: 8px;
+    }
+    
+    .open-link {
+      font-size: 12px;
+      color: #18A0FB;
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+    }
+    
+    .open-link svg {
+      margin-left: 4px;
+      width: 12px;
+      height: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="plugin-header">
+      <h1>DesignTrail</h1>
+      <div class="subheading">Manage inspiration sources with tags and notes</div>
+    </div>
+    
+    <div id="message-container"></div>
+    
+    <div id="layer-info" class="layer-name" style="display: none;">
+      <div class="layer-icon">
+        <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="8" height="8" />
+        </svg>
+      </div>
+      <span id="layerName">Layer name</span>
+    </div>
+    
+    <div id="metadata-form">
+      <div class="form-group">
+        <label for="sourceUrl">Source URL</label>
+        <input type="url" id="sourceUrl" placeholder="https://..." />
+        <div class="url-actions">
+          <a id="openLink" class="open-link" target="_blank" style="display: none;">
+            Open link
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          </a>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="tagInput">Tags</label>
+        <input type="text" id="tagInput" placeholder="Add tags... (press Enter)" />
+        <div id="tagsContainer" class="tags-container"></div>
+      </div>
+      
+      <div class="form-group">
+        <label for="notes">Notes</label>
+        <textarea id="notes" rows="4" placeholder="Add your notes..."></textarea>
+      </div>
+      
+      <button id="saveBtn">Save Metadata</button>
+    </div>
+  </div>
+
+  <script>
+    let currentTags = [];
+    let currentNodeName = '';
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize
+      parent.postMessage({ pluginMessage: { type: 'get-metadata' } }, '*');
+      parent.postMessage({ pluginMessage: { type: 'get-all-tags' } }, '*');
+      
+      // Tag input handling
+      const tagInput = document.getElementById('tagInput');
+      
+      tagInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && this.value.trim() !== '') {
+          addTag(this.value.trim());
+          this.value = '';
+          e.preventDefault();
+        }
+      });
+      
+      // Source URL input for open link button
+      document.getElementById('sourceUrl').addEventListener('input', function() {
+        const openLinkBtn = document.getElementById('openLink');
+        if (this.value) {
+          openLinkBtn.href = this.value;
+          openLinkBtn.style.display = 'inline-flex';
+        } else {
+          openLinkBtn.style.display = 'none';
+        }
+      });
+      
+      // Save button
+      document.getElementById('saveBtn').addEventListener('click', function() {
+        const sourceUrl = document.getElementById('sourceUrl').value;
+        const notes = document.getElementById('notes').value;
+        
+        parent.postMessage({
+          pluginMessage: {
+            type: 'save-metadata',
+            sourceUrl,
+            tags: currentTags,
+            notes
+          }
+        }, '*');
+      });
+      
+      // Listen for messages from the plugin
+      window.onmessage = (event) => {
+        const msg = event.data.pluginMessage;
+        
+        if (msg.type === 'metadata-loaded') {
+          displayMetadata(msg.data);
+          updateLayerInfo(msg.nodeName);
+        } else if (msg.type === 'no-selection' || msg.type === 'new-element') {
+          displayMessage(msg.message);
+          clearForm();
+          if (msg.type === 'new-element') {
+            updateLayerInfo(msg.nodeName);
+          } else {
+            document.getElementById('layer-info').style.display = 'none';
+          }
+        } else if (msg.type === 'selection-changed') {
+          parent.postMessage({ pluginMessage: { type: 'get-metadata' } }, '*');
+        }
+      };
+    });
+    
+    function updateLayerInfo(nodeName) {
+      currentNodeName = nodeName;
+      document.getElementById('layerName').textContent = nodeName;
+      document.getElementById('layer-info').style.display = 'flex';
+    }
+    
+    function displayMetadata(data) {
+      document.getElementById('message-container').innerHTML = '';
+      
+      const sourceUrl = data.sourceUrl || '';
+      document.getElementById('sourceUrl').value = sourceUrl;
+      document.getElementById('notes').value = data.notes || '';
+      
+      // Update the open link button
+      const openLinkBtn = document.getElementById('openLink');
+      if (sourceUrl) {
+        openLinkBtn.href = sourceUrl;
+        openLinkBtn.style.display = 'inline-flex';
+      } else {
+        openLinkBtn.style.display = 'none';
+      }
+      
+      // Update tags
+      currentTags = data.tags || [];
+      updateTagsDisplay();
+    }
+    
+    function displayMessage(message) {
+      const container = document.getElementById('message-container');
+      container.innerHTML = `<div class="message">${message}</div>`;
+    }
+    
+    function clearForm() {
+      document.getElementById('sourceUrl').value = '';
+      document.getElementById('notes').value = '';
+      document.getElementById('openLink').style.display = 'none';
+      currentTags = [];
+      updateTagsDisplay();
+    }
+    
+    function addTag(tag) {
+      if (!currentTags.includes(tag)) {
+        currentTags.push(tag);
+        updateTagsDisplay();
+      }
+    }
+    
+    function removeTag(tag) {
+      currentTags = currentTags.filter(t => t !== tag);
+      updateTagsDisplay();
+    }
+    
+    function updateTagsDisplay() {
+      const container = document.getElementById('tagsContainer');
+      container.innerHTML = '';
+      
+      currentTags.forEach(tag => {
+        const tagElement = document.createElement('div');
+        tagElement.className = 'tag';
+        tagElement.innerHTML = `${tag} <span class="tag-remove">×</span>`;
+        
+        tagElement.querySelector('.tag-remove').addEventListener('click', function() {
+          removeTag(tag);
+        });
+        
+        container.appendChild(tagElement);
+      });
+    }
+  </script>
+</body>
+</html>
