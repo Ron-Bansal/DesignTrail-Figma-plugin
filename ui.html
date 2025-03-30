@@ -1,1741 +1,3112 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <style>
-    /* Modern Design System Variables */
-    :root {
-      /* Core colors */
-      --primary-gradient: linear-gradient(135deg, #3A36DB, #7A53FB);
-      --secondary-gradient: linear-gradient(135deg, #FF6B6B, #FF9E7D);
-      
-      /* Light theme */
-      --bg-color: #FFFFFF;
-      --card-bg: #F9FAFC;
-      --text-color: #1A1A2E;
-      --text-secondary: #64748B;
-      --border-color: #E2E8F0;
-      --primary-color: #5B55E3;
-      --primary-hover: #4842C9;
-      --secondary-color: #FF7B6B;
-      --accent-color: #00D2D3;
-      --tag-bg: #EEF2FF;
-      --tag-color: #4842C9;
-      --success-color: #10B981;
-      --warning-color: #F59E0B;
-      --error-color: #EF4444;
-      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      --radius-sm: 6px;
-      --radius-md: 8px;
-      --radius-lg: 12px;
-      --radius-full: 9999px;
-    }
-    
-    /* Dark theme */
-    .dark-theme {
-      --bg-color: #0F172A;
-      --card-bg: #1E293B;
-      --text-color: #F1F5F9;
-      --text-secondary: #94A3B8;
-      --border-color: #334155;
-      --primary-color: #6366F1;
-      --primary-hover: #818CF8;
-      --secondary-color: #FF7B6B;
-      --accent-color: #22D3EE;
-      --tag-bg: #3B3EE2;
-      --tag-color: #EEF2FF;
-      --success-color: #34D399;
-      --warning-color: #FBBF24;
-      --error-color: #F87171;
-      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.12);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
-    }
-    
-    /* Base Styles */
-    * {
-      box-sizing: border-box;
-      transition: background-color 0.2s, color 0.2s, border-color 0.2s, opacity 0.2s, transform 0.2s;
-      margin: 0;
-      padding: 0;
-    }
-    
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      margin: 0;
-      padding: 0;
-      color: var(--text-color);
-      background-color: var(--bg-color);
-      overflow: hidden;
-      height: 100vh;
-      font-size: 14px;
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    
-    /* Container and Layout */
-    .container {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .header {
-      padding: 16px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border-color);
-    }
-    
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .logo-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: var(--radius-sm);
-      background: var(--primary-gradient);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 700;
-    }
-    
-    .tagline {
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-top: 2px;
-    }
-    
-    .main-content {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    
-    /* Resizable handle - only visible when hovered */
-    .resize-handle {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      width: 16px;
-      height: 16px;
-      cursor: nwse-resize;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-    
-    .resize-handle:after {
-      content: '';
-      position: absolute;
-      right: 4px;
-      bottom: 4px;
-      width: 8px;
-      height: 8px;
-      border-right: 2px solid var(--text-secondary);
-      border-bottom: 2px solid var(--text-secondary);
-      opacity: 0.6;
-    }
-    
-    .container:hover .resize-handle {
-      opacity: 1;
-    }
-    
-    /* Icons and buttons */
-    .icon-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      background-color: transparent;
-      color: var(--text-secondary);
-      border: none;
-      position: relative;
-      outline: none;
-    }
-    
-    .icon-btn:hover {
-      background-color: var(--card-bg);
-      color: var(--text-color);
-    }
-    
-    .icon-btn svg {
-      width: 18px;
-      height: 18px;
-    }
-    
-    /* Layer info card */
-    .layer-card {
-      background-color: var(--card-bg);
-      border-radius: var(--radius-md);
-      padding: 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: var(--shadow-sm);
-      animation: slideIn 0.3s ease-out;
-    }
-    
-    .layer-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: var(--radius-md);
-      background: var(--primary-gradient);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      flex-shrink: 0;
-    }
-    
-    .layer-details {
-      overflow: hidden;
-    }
-    
-    .layer-name {
-      font-weight: 600;
-      font-size: 15px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    
-    .layer-type {
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-top: 2px;
-    }
-    
-    /* Form elements */
-    .form-group {
-      margin-bottom: 16px;
-    }
-    
-    .form-group:last-child {
-      margin-bottom: 0;
-    }
-    
-    .input-label {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-color);
-    }
-    
-    .input-field {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      font-size: 14px;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      transition: all 0.2s;
-    }
-    
-    .input-field:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-    }
-    
-    .textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-    
-    /* URL actions */
-    .url-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-    }
-    
-    .action-btn {
-      display: inline-flex;
-      align-items: center;
-      font-size: 13px;
-      color: var(--primary-color);
-      padding: 8px 12px;
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      background-color: var(--tag-bg);
-      border: none;
-      font-weight: 500;
-      gap: 6px;
-    }
-    
-    .action-btn:hover {
-      background-color: rgba(99, 102, 241, 0.15);
-      transform: translateY(-1px);
-    }
-    
-    .action-btn:active {
-      transform: translateY(0);
-    }
-    
-    /* Tags */
-    .tags-input-wrapper {
-      position: relative;
-    }
-    
-    .tags-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
-      min-height: 32px;
-    }
-    
-    .tag {
-      background-color: var(--tag-bg);
-      color: var(--tag-color);
-      padding: 6px 10px;
-      border-radius: var(--radius-full);
-      font-size: 13px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: 500;
-      box-shadow: var(--shadow-sm);
-      animation: scaleIn 0.2s ease-out;
-    }
-    
-    .tag-remove {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background-color: rgba(255, 255, 255, 0.2);
-      cursor: pointer;
-      font-size: 14px;
-      line-height: 1;
-    }
-    
-    .tag-remove:hover {
-      background-color: rgba(255, 255, 255, 0.3);
-      transform: scale(1.1);
-    }
-    
-    /* Better tag suggestions */
-    .tag-suggestions {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      max-height: 150px;
-      overflow-y: auto;
-      background-color: var(--bg-color);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow-md);
-      z-index: 10;
-      margin-top: 5px;
-      display: none;
-    }
-    
-    .tag-suggestion-item {
-      padding: 8px 12px;
-      cursor: pointer;
-      transition: all 0.1s;
-    }
-    
-    .tag-suggestion-item:hover {
-      background-color: var(--card-bg);
-    }
-    
-    .tag-suggestion-item.active {
-      background-color: var(--tag-bg);
-      color: var(--tag-color);
-    }
-    
-    /* Primary button */
-    .primary-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--primary-gradient);
-      color: white;
-      border: none;
-      padding: 12px 16px;
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-      width: 100%;
-      gap: 8px;
-      box-shadow: var(--shadow-md);
-      margin-top: 8px;
-    }
-    
-    .primary-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
-    }
-    
-    .primary-btn:active {
-      transform: translateY(0);
-      box-shadow: var(--shadow-sm);
-    }
-    
-    /* Status indicator */
-    .status-indicator {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-top: 12px;
-      justify-content: center;
-    }
-    
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    
-    .status-dot.saved {
-      background-color: var(--success-color);
-    }
-    
-    .status-dot.unsaved {
-      background-color: var(--warning-color);
-    }
-    
-    /* Messages */
-    .message {
-      padding: 14px;
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      animation: fadeIn 0.3s ease-out;
-    }
-    
-    .message.info {
-      background-color: rgba(99, 102, 241, 0.1);
-      border-left: 3px solid var(--primary-color);
-    }
-    
-    .message.warning {
-      background-color: rgba(245, 158, 11, 0.1);
-      border-left: 3px solid var(--warning-color);
-    }
-    
-    .message.success {
-      background-color: rgba(16, 185, 129, 0.1);
-      border-left: 3px solid var(--success-color);
-    }
-    
-    .message-icon {
-      flex-shrink: 0;
-      color: var(--primary-color);
-    }
-    
-    .message.warning .message-icon {
-      color: var(--warning-color);
-    }
-    
-    .message.success .message-icon {
-      color: var(--success-color);
-    }
-    
-    .message-content {
-      flex: 1;
-    }
-    
-    .message-title {
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-    
-    .message-text {
-      font-size: 13px;
-      color: var(--text-secondary);
-    }
-    
-    /* Settings panel */
-    .settings-panel {
-      position: absolute;
-      top: 60px;
-      right: 20px;
-      background-color: var(--bg-color);
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow-lg);
-      padding: 16px;
-      z-index: 100;
-      width: 260px;
-      border: 1px solid var(--border-color);
-      animation: fadeInDown 0.2s ease-out;
-      display: none;
-    }
-    
-    .settings-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-    
-    .settings-title {
-      font-size: 15px;
-      font-weight: 600;
-    }
-    
-    .close-btn {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: var(--text-secondary);
-      background-color: transparent;
-      border: none;
-    }
-    
-    .close-btn:hover {
-      background-color: var(--card-bg);
-      color: var(--text-color);
-    }
-    
-    .settings-group {
-      margin-bottom: 16px;
-    }
-    
-    .settings-group:last-child {
-      margin-bottom: 0;
-    }
-    
-    .settings-label {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 13px;
-      font-weight: 500;
-    }
-    
-    .toggle-group {
-      display: flex;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-    }
-    
-    .toggle-option {
-      flex: 1;
-      text-align: center;
-      padding: 8px;
-      font-size: 13px;
-      cursor: pointer;
-      background-color: var(--bg-color);
-      color: var(--text-secondary);
-      font-weight: 500;
-      position: relative;
-      z-index: 1;
-    }
-    
-    .toggle-option.active {
-      color: white;
-    }
-    
-    .toggle-option.active::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: var(--primary-gradient);
-      z-index: -1;
-    }
-    
-    /* Switch for toggle */
-    .switch-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 44px;
-      height: 24px;
-    }
-    
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-    
-    .switch-slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: var(--border-color);
-      transition: .3s;
-      border-radius: 34px;
-    }
-    
-    .switch-slider:before {
-      position: absolute;
-      content: "";
-      height: 18px;
-      width: 18px;
-      left: 3px;
-      bottom: 3px;
-      background-color: white;
-      transition: .3s;
-      border-radius: 50%;
-    }
-    
-    input:checked + .switch-slider {
-      background: var(--primary-gradient);
-    }
-    
-    input:focus + .switch-slider {
-      box-shadow: 0 0 1px var(--primary-color);
-    }
-    
-    input:checked + .switch-slider:before {
-      transform: translateX(20px);
-    }
-    
-    /* Landscape layout */
-    .landscape-container {
-      flex-direction: row;
-      height: 100vh;
-    }
-    
-    .landscape-sidebar {
-      width: 280px;
-      border-right: 1px solid var(--border-color);
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .landscape-main {
-      flex: 1;
-      height: 100vh;
-      overflow-y: auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    
-    /* Toast notification */
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background-color: var(--card-bg);
-      border-radius: var(--radius-md);
-      padding: 12px 20px;
-      box-shadow: var(--shadow-lg);
-      font-size: 13px;
-      color: var(--text-color);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      z-index: 1000;
-      opacity: 0;
-      transition: opacity 0.3s, transform 0.3s;
-      border: 1px solid var(--border-color);
-    }
-    
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-    
-    .toast-icon {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background-color: var(--success-color);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-    }
-    
-    /* Animations */
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    
-    @keyframes fadeInDown {
-      from { 
-        opacity: 0;
-        transform: translateY(-10px);
+  <head>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      /* Modern Design System Variables */
+      :root {
+        /* Core colors */
+        --primary-gradient: linear-gradient(135deg, #3a36db, #7a53fb);
+        --secondary-gradient: linear-gradient(135deg, #ff6b6b, #ff9e7d);
+
+        /* Light theme */
+        --bg-color: #ffffff;
+        --card-bg: #f9fafc;
+        --text-color: #1a1a2e;
+        --text-secondary: #64748b;
+        --border-color: #e2e8f0;
+        --primary-color: #5b55e3;
+        --primary-hover: #4842c9;
+        --secondary-color: #ff7b6b;
+        --accent-color: #00d2d3;
+        --tag-bg: #eef2ff;
+        --tag-color: #4842c9;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --error-color: #ef4444;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --radius-sm: 6px;
+        --radius-md: 8px;
+        --radius-lg: 12px;
+        --radius-full: 9999px;
       }
-      to { 
+
+      /* Dark theme */
+      .dark-theme {
+        --bg-color: #0f172a;
+        --card-bg: #1e293b;
+        --text-color: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --border-color: #334155;
+        --primary-color: #6366f1;
+        --primary-hover: #818cf8;
+        --secondary-color: #ff7b6b;
+        --accent-color: #22d3ee;
+        --tag-bg: #3b3ee2;
+        --tag-color: #eef2ff;
+        --success-color: #34d399;
+        --warning-color: #fbbf24;
+        --error-color: #f87171;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2),
+          0 2px 4px -1px rgba(0, 0, 0, 0.12);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.2),
+          0 4px 6px -2px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Base Styles */
+      * {
+        box-sizing: border-box;
+        transition: background-color 0.2s, color 0.2s, border-color 0.2s,
+          opacity 0.2s, transform 0.2s;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        margin: 0;
+        padding: 0;
+        color: var(--text-color);
+        background-color: var(--bg-color);
+        overflow: hidden;
+        height: 100vh;
+        font-size: 14px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* Container and Layout */
+      .container {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .header {
+        padding: 16px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .logo-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: var(--radius-sm);
+        background: var(--primary-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+      }
+
+      .tagline {
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-top: 2px;
+      }
+
+      .main-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      /* Tabs Navigation */
+      .tabs-navigation {
+        display: flex;
+        border-bottom: 1px solid var(--border-color);
+        background-color: var(--bg-color);
+        position: relative;
+        z-index: 1;
+      }
+
+      .tab-btn {
+        padding: 12px 16px;
+        background-color: transparent;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        position: relative;
+        transition: all 0.2s;
+      }
+
+      .tab-btn:hover {
+        color: var(--primary-color);
+      }
+
+      .tab-btn.active {
+        color: var(--primary-color);
+      }
+
+      .tab-btn.active::after {
+        content: "";
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background-color: var(--primary-color);
+      }
+
+      .tab-content {
+        display: none;
+        flex: 1;
+        flex-direction: column;
+        overflow-y: auto;
+      }
+
+      .tab-content.active {
+        display: flex;
+      }
+
+      /* Landscape tabs */
+      .landscape-tabs {
+        flex-direction: column;
+        border-bottom: none;
+        border-right: 1px solid var(--border-color);
+      }
+
+      .landscape-tabs .tab-btn {
+        border-right: 2px solid transparent;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .landscape-tabs .tab-btn.active::after {
+        content: none;
+      }
+
+      .landscape-tabs .tab-btn.active {
+        border-right: 2px solid var(--primary-color);
+        background-color: var(--card-bg);
+      }
+
+      .landscape-tab {
+        height: calc(100vh - 56px);
+      }
+
+      /* Resizable handle - only visible when hovered */
+      .resize-handle {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 16px;
+        height: 16px;
+        cursor: nwse-resize;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+
+      .resize-handle:after {
+        content: "";
+        position: absolute;
+        right: 4px;
+        bottom: 4px;
+        width: 8px;
+        height: 8px;
+        border-right: 2px solid var(--text-secondary);
+        border-bottom: 2px solid var(--text-secondary);
+        opacity: 0.6;
+      }
+
+      .container:hover .resize-handle {
         opacity: 1;
+      }
+
+      /* Icons and buttons */
+      .icon-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        background-color: transparent;
+        color: var(--text-secondary);
+        border: none;
+        position: relative;
+        outline: none;
+      }
+
+      .icon-btn:hover {
+        background-color: var(--card-bg);
+        color: var(--text-color);
+      }
+
+      .icon-btn svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      /* Layer info card */
+      .layer-card {
+        background-color: var(--card-bg);
+        border-radius: var(--radius-md);
+        padding: 14px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: var(--shadow-sm);
+        animation: slideIn 0.3s ease-out;
+      }
+
+      .layer-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-md);
+        background: var(--primary-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        flex-shrink: 0;
+      }
+
+      .layer-details {
+        overflow: hidden;
+      }
+
+      .layer-name {
+        font-weight: 600;
+        font-size: 15px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .layer-type {
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-top: 2px;
+      }
+
+      /* Form elements */
+      .form-group {
+        margin-bottom: 16px;
+      }
+
+      .form-group:last-child {
+        margin-bottom: 0;
+      }
+
+      .input-label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-color);
+      }
+
+      .input-field {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        font-size: 14px;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        transition: all 0.2s;
+      }
+
+      .input-field:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+      }
+
+      .textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      /* URL actions */
+      .url-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .action-btn {
+        display: inline-flex;
+        align-items: center;
+        font-size: 13px;
+        color: var(--primary-color);
+        padding: 8px 12px;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        background-color: var(--tag-bg);
+        border: none;
+        font-weight: 500;
+        gap: 6px;
+      }
+
+      .action-btn:hover {
+        background-color: rgba(99, 102, 241, 0.15);
+        transform: translateY(-1px);
+      }
+
+      .action-btn:active {
         transform: translateY(0);
       }
-    }
-    
-    @keyframes slideIn {
-      from { 
-        opacity: 0;
-        transform: translateY(10px);
+
+      /* Search Input */
+      .search-container {
+        margin-bottom: 16px;
       }
-      to { 
-        opacity: 1;
+
+      .search-input-wrapper {
+        position: relative;
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary);
+      }
+
+      .search-field {
+        padding-left: 40px;
+      }
+
+      /* Filter tags */
+      .filter-tags-container {
+        margin-bottom: 16px;
+      }
+
+      .filter-label {
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: var(--text-color);
+      }
+
+      .filter-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .filter-tag {
+        background-color: var(--card-bg);
+        color: var(--text-secondary);
+        padding: 6px 10px;
+        border-radius: var(--radius-full);
+        font-size: 13px;
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+        border: 1px solid var(--border-color);
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+
+      .filter-tag:hover {
+        background-color: var(--tag-bg);
+        color: var(--tag-color);
+        border-color: var(--tag-bg);
+      }
+
+      .filter-tag.active {
+        background-color: var(--tag-bg);
+        color: var(--tag-color);
+        border-color: var(--tag-bg);
+      }
+
+      /* Elements List */
+      .elements-list {
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .list-loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 0;
+        gap: 16px;
+        color: var(--text-secondary);
+      }
+
+      .spinner {
+        width: 24px;
+        height: 24px;
+        border: 2px solid var(--border-color);
+        border-top-color: var(--primary-color);
+        border-radius: 50%;
+        animation: spinner 0.8s linear infinite;
+      }
+
+      @keyframes spinner {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .element-list-item {
+        background-color: var(--card-bg);
+        border-radius: var(--radius-md);
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+        border: 1px solid var(--border-color);
+        transition: all 0.2s;
+      }
+
+      .element-list-item:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary-color);
+      }
+
+      .element-list-item.active {
+        border-color: var(--primary-color);
+        background-color: var(--tag-bg);
+      }
+
+      .element-list-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: var(--radius-sm);
+        background: var(--primary-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        flex-shrink: 0;
+      }
+
+      .element-list-info {
+        flex: 1;
+        overflow: hidden;
+      }
+
+      .element-list-name {
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .element-list-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 4px;
+      }
+
+      .element-list-tag {
+        background-color: var(--tag-bg);
+        color: var(--tag-color);
+        padding: 2px 6px;
+        border-radius: var(--radius-full);
+        font-size: 11px;
+        font-weight: 500;
+      }
+
+      .element-list-goto {
+        width: 28px;
+        height: 28px;
+      }
+
+      /* Element Detail */
+      .element-detail {
+        background-color: var(--card-bg);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .element-detail-empty {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+        padding: 32px;
+        text-align: center;
+      }
+
+      .element-detail-header {
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid var(--border-color);
+        background-color: var(--bg-color);
+      }
+
+      .element-detail-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-md);
+        background: var(--primary-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        flex-shrink: 0;
+      }
+
+      .element-detail-info {
+        flex: 1;
+      }
+
+      .element-detail-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .element-detail-type {
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+
+      .element-detail-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .element-detail-content {
+        padding: 16px;
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .detail-section {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .detail-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+
+      .detail-source-url {
+        overflow-wrap: break-word;
+        word-break: break-all;
+      }
+
+      .detail-url-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .detail-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .detail-tag {
+        background-color: var(--tag-bg);
+        color: var(--tag-color);
+        padding: 6px 10px;
+        border-radius: var(--radius-full);
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .detail-notes {
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+        line-height: 1.6;
+      }
+
+      .detail-last-modified {
+        color: var(--text-secondary);
+        font-size: 13px;
+      }
+
+      /* Tags */
+      .tags-input-wrapper {
+        position: relative;
+      }
+
+      .tags-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+        min-height: 32px;
+      }
+
+      .tag {
+        background-color: var(--tag-bg);
+        color: var(--tag-color);
+        padding: 6px 10px;
+        border-radius: var(--radius-full);
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 500;
+        box-shadow: var(--shadow-sm);
+        animation: scaleIn 0.2s ease-out;
+      }
+
+      .tag-remove {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.2);
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1;
+      }
+
+      .tag-remove:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+      }
+
+      /* Better tag suggestions */
+      .tag-suggestions {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        max-height: 150px;
+        overflow-y: auto;
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-md);
+        z-index: 10;
+        margin-top: 5px;
+        display: none;
+      }
+
+      .tag-suggestion-item {
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: all 0.1s;
+      }
+
+      .tag-suggestion-item:hover {
+        background-color: var(--card-bg);
+      }
+
+      .tag-suggestion-item.active {
+        background-color: var(--tag-bg);
+        color: var(--tag-color);
+      }
+
+      /* Primary button */
+      .primary-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        padding: 12px 16px;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        width: 100%;
+        gap: 8px;
+        box-shadow: var(--shadow-md);
+        margin-top: 8px;
+      }
+
+      .primary-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .primary-btn:active {
         transform: translateY(0);
+        box-shadow: var(--shadow-sm);
       }
-    }
-    
-    @keyframes scaleIn {
-      from { 
-        opacity: 0;
-        transform: scale(0.8);
+
+      /* Status indicator */
+      .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-top: 12px;
+        justify-content: center;
       }
-      to { 
-        opacity: 1;
-        transform: scale(1);
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
       }
-    }
-    
-    @keyframes pulse {
-      0% { opacity: 0.6; }
-      50% { opacity: 1; }
-      100% { opacity: 0.6; }
-    }
-    
-    .pulse {
-      animation: pulse 1.5s infinite;
-    }
-    
-    /* Empty state */
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 30px 0;
-      text-align: center;
-    }
-    
-    .empty-state-icon {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: var(--tag-bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 16px;
-      color: var(--primary-color);
-    }
-    
-    .empty-state-text {
-      font-size: 15px;
-      font-weight: 500;
-      margin-bottom: 8px;
-    }
-    
-    .empty-state-subtext {
-      font-size: 13px;
-      color: var(--text-secondary);
-      max-width: 260px;
-    }
-  </style>
-</head>
-<body>
-  <!-- Portrait Layout -->
-  <div id="portrait-container" class="container">
-    <div class="header">
-      <div class="logo">
-        <div class="logo-icon">DT</div>
-        <div class="tagline">Manage inspiration sources & references</div>
+
+      .status-dot.saved {
+        background-color: var(--success-color);
+      }
+
+      .status-dot.unsaved {
+        background-color: var(--warning-color);
+      }
+
+      /* Messages */
+      .message {
+        padding: 14px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        animation: fadeIn 0.3s ease-out;
+      }
+
+      .message.info {
+        background-color: rgba(99, 102, 241, 0.1);
+        border-left: 3px solid var(--primary-color);
+      }
+
+      .message.warning {
+        background-color: rgba(245, 158, 11, 0.1);
+        border-left: 3px solid var(--warning-color);
+      }
+
+      .message.success {
+        background-color: rgba(16, 185, 129, 0.1);
+        border-left: 3px solid var(--success-color);
+      }
+
+      .message-icon {
+        flex-shrink: 0;
+        color: var(--primary-color);
+      }
+
+      .message.warning .message-icon {
+        color: var(--warning-color);
+      }
+
+      .message.success .message-icon {
+        color: var(--success-color);
+      }
+
+      .message-content {
+        flex: 1;
+      }
+
+      .message-title {
+        font-weight: 600;
+        margin-bottom: 2px;
+      }
+
+      .message-text {
+        font-size: 13px;
+        color: var(--text-secondary);
+      }
+
+      /* Settings panel */
+      .settings-panel {
+        position: absolute;
+        top: 60px;
+        right: 20px;
+        background-color: var(--bg-color);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-lg);
+        padding: 16px;
+        z-index: 100;
+        width: 260px;
+        border: 1px solid var(--border-color);
+        animation: fadeInDown 0.2s ease-out;
+        display: none;
+      }
+
+      .settings-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+      }
+
+      .settings-title {
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      .close-btn {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--text-secondary);
+        background-color: transparent;
+        border: none;
+      }
+
+      .close-btn:hover {
+        background-color: var(--card-bg);
+        color: var(--text-color);
+      }
+
+      .settings-group {
+        margin-bottom: 16px;
+      }
+
+      .settings-group:last-child {
+        margin-bottom: 0;
+      }
+
+      .settings-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .toggle-group {
+        display: flex;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+      }
+
+      .toggle-option {
+        flex: 1;
+        text-align: center;
+        padding: 8px;
+        font-size: 13px;
+        cursor: pointer;
+        background-color: var(--bg-color);
+        color: var(--text-secondary);
+        font-weight: 500;
+        position: relative;
+        z-index: 1;
+      }
+
+      .toggle-option.active {
+        color: white;
+      }
+
+      .toggle-option.active::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--primary-gradient);
+        z-index: -1;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Portrait Layout -->
+    <div id="portrait-container" class="container">
+      <div class="header">
+        <div class="logo">
+          <div class="logo-icon">DT</div>
+          <div class="tagline">Manage inspiration sources & references</div>
+        </div>
+
+        <button id="settings-trigger" class="icon-btn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="3"></circle>
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+            ></path>
+          </svg>
+        </button>
       </div>
-      
-      <button id="settings-trigger" class="icon-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"></circle>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-        </svg>
-      </button>
+
+      <!-- Tabs Navigation -->
+      <div class="tabs-navigation">
+        <button class="tab-btn active" data-tab="metadata">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
+            <line x1="16" y1="8" x2="2" y2="22"></line>
+            <line x1="17.5" y1="15" x2="9" y2="15"></line>
+          </svg>
+          Metadata
+        </button>
+        <button class="tab-btn" data-tab="explore">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          Explore
+        </button>
+      </div>
+
+      <div class="main-content">
+        <!-- Metadata Tab Content -->
+        <div id="metadata-tab" class="tab-content active">
+          <div id="message-container"></div>
+
+          <div id="layer-info" class="layer-card" style="display: none">
+            <div class="layer-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polygon
+                  points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"
+                ></polygon>
+                <line x1="8" y1="2" x2="8" y2="18"></line>
+                <line x1="16" y1="6" x2="16" y2="22"></line>
+              </svg>
+            </div>
+            <div class="layer-details">
+              <div id="layerName" class="layer-name">Layer name</div>
+              <div class="layer-type">Selected Element</div>
+            </div>
+          </div>
+
+          <div id="metadata-form">
+            <div class="form-group">
+              <label for="sourceUrl" class="input-label">Source URL</label>
+              <input
+                type="url"
+                id="sourceUrl"
+                class="input-field"
+                placeholder="https://..."
+              />
+              <div class="url-actions">
+                <button id="openLink" class="action-btn" style="display: none">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                    ></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                  Open link
+                </button>
+                <button id="copyLink" class="action-btn" style="display: none">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <rect
+                      x="9"
+                      y="9"
+                      width="13"
+                      height="13"
+                      rx="2"
+                      ry="2"
+                    ></rect>
+                    <path
+                      d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+                    ></path>
+                  </svg>
+                  Copy link
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="tagInput" class="input-label">Tags</label>
+              <div class="tags-input-wrapper">
+                <input
+                  type="text"
+                  id="tagInput"
+                  class="input-field"
+                  placeholder="Add tags... (press Enter)"
+                />
+                <div id="tagSuggestions" class="tag-suggestions"></div>
+                <div id="tagsContainer" class="tags-container"></div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="notes" class="input-label">Notes</label>
+              <textarea
+                id="notes"
+                class="input-field textarea"
+                placeholder="Add your notes..."
+              ></textarea>
+            </div>
+
+            <button id="saveBtn" class="primary-btn">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
+                ></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+              Save Metadata
+            </button>
+
+            <div
+              id="status-indicator"
+              class="status-indicator"
+              style="display: none"
+            >
+              <span class="status-dot unsaved"></span>
+              <span>Draft saved automatically</span>
+            </div>
+          </div>
+
+          <!-- Empty state - shown when no layer is selected -->
+          <div id="empty-state" class="empty-state" style="display: none">
+            <div class="empty-state-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="9" y1="3" x2="9" y2="21"></line>
+              </svg>
+            </div>
+            <div class="empty-state-text">Select an element to begin</div>
+            <div class="empty-state-subtext">
+              Click on any layer in your design to add reference metadata
+            </div>
+          </div>
+        </div>
+
+        <!-- Explore Tab Content -->
+        <div id="explore-tab" class="tab-content">
+          <div class="search-container">
+            <div class="search-input-wrapper">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="search-icon"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input
+                type="text"
+                id="searchInput"
+                class="input-field search-field"
+                placeholder="Search by name, tag, or source URL..."
+              />
+            </div>
+          </div>
+
+          <div class="filter-tags-container">
+            <div class="filter-label">Filter by tag:</div>
+            <div id="filterTagsContainer" class="filter-tags">
+              <!-- Tags for filtering will be added here -->
+            </div>
+          </div>
+
+          <div id="elements-list" class="elements-list">
+            <!-- Elements with metadata will be listed here -->
+            <div class="list-loading">
+              <div class="spinner"></div>
+              <span>Loading elements...</span>
+            </div>
+          </div>
+
+          <!-- Empty state for explore tab -->
+          <div
+            id="explore-empty-state"
+            class="empty-state"
+            style="display: none"
+          >
+            <div class="empty-state-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"
+                ></path>
+                <line x1="16" y1="8" x2="2" y2="22"></line>
+                <line x1="17.5" y1="15" x2="9" y2="15"></line>
+              </svg>
+            </div>
+            <div class="empty-state-text">No elements with metadata yet</div>
+            <div class="empty-state-subtext">
+              Select any layer and add metadata to start building your
+              collection
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="resize-handle" id="resize-handle"></div>
     </div>
-    
-    <div class="main-content">
-      <div id="message-container"></div>
-      
-      <div id="layer-info" class="layer-card" style="display: none;">
-        <div class="layer-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+
+    <!-- Landscape Layout -->
+    <div
+      id="landscape-container"
+      class="landscape-container"
+      style="display: none"
+    >
+      <div class="landscape-sidebar">
+        <div class="header">
+          <div class="logo">
+            <div class="logo-icon">DT</div>
+          </div>
+          <button id="landscape-settings-trigger" class="icon-btn">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="3"></circle>
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+              ></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Tabs for landscape view -->
+        <div class="tabs-navigation landscape-tabs">
+          <button class="tab-btn active" data-tab="metadata">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
+              <line x1="16" y1="8" x2="2" y2="22"></line>
+              <line x1="17.5" y1="15" x2="9" y2="15"></line>
+            </svg>
+            Metadata
+          </button>
+          <button class="tab-btn" data-tab="explore">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            Explore
+          </button>
+        </div>
+
+        <!-- Metadata Tab Content for Landscape -->
+        <div
+          id="landscape-metadata-tab"
+          class="tab-content landscape-tab active"
+        >
+          <div
+            id="landscape-layer-info"
+            class="layer-card"
+            style="margin: 16px; display: none"
+          >
+            <div class="layer-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polygon
+                  points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"
+                ></polygon>
+                <line x1="8" y1="2" x2="8" y2="18"></line>
+                <line x1="16" y1="6" x2="16" y2="22"></line>
+              </svg>
+            </div>
+            <div class="layer-details">
+              <div id="landscapeLayerName" class="layer-name">Layer name</div>
+              <div class="layer-type">Selected Element</div>
+            </div>
+          </div>
+
+          <div class="main-content">
+            <div id="landscape-message-container"></div>
+
+            <div class="form-group">
+              <label for="landscapeSourceUrl" class="input-label"
+                >Source URL</label
+              >
+              <input
+                type="url"
+                id="landscapeSourceUrl"
+                class="input-field"
+                placeholder="https://..."
+              />
+              <div class="url-actions">
+                <button
+                  id="landscapeOpenLink"
+                  class="action-btn"
+                  style="display: none"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                    ></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                  Open
+                </button>
+                <button
+                  id="landscapeCopyLink"
+                  class="action-btn"
+                  style="display: none"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <rect
+                      x="9"
+                      y="9"
+                      width="13"
+                      height="13"
+                      rx="2"
+                      ry="2"
+                    ></rect>
+                    <path
+                      d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+                    ></path>
+                  </svg>
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="landscapeTagInput" class="input-label">Tags</label>
+              <div class="tags-input-wrapper">
+                <input
+                  type="text"
+                  id="landscapeTagInput"
+                  class="input-field"
+                  placeholder="Add tags... (press Enter)"
+                />
+                <div id="landscapeTagSuggestions" class="tag-suggestions"></div>
+                <div id="landscapeTagsContainer" class="tags-container"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Explore Tab Content for Landscape -->
+        <div id="landscape-explore-tab" class="tab-content landscape-tab">
+          <div class="search-container">
+            <div class="search-input-wrapper">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="search-icon"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input
+                type="text"
+                id="landscapeSearchInput"
+                class="input-field search-field"
+                placeholder="Search by name, tag, or source URL..."
+              />
+            </div>
+          </div>
+
+          <div class="filter-tags-container">
+            <div class="filter-label">Filter by tag:</div>
+            <div id="landscapeFilterTagsContainer" class="filter-tags">
+              <!-- Tags for filtering will be added here -->
+            </div>
+          </div>
+
+          <div id="landscape-elements-list" class="elements-list">
+            <!-- Elements with metadata will be listed here -->
+            <div class="list-loading">
+              <div class="spinner"></div>
+              <span>Loading elements...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="landscape-main">
+        <!-- This will change based on active tab -->
+        <div id="landscape-main-metadata" class="landscape-main-content active">
+          <div
+            id="landscape-empty-state"
+            class="empty-state"
+            style="display: none"
+          >
+            <div class="empty-state-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="9" y1="3" x2="9" y2="21"></line>
+              </svg>
+            </div>
+            <div class="empty-state-text">Select an element to begin</div>
+            <div class="empty-state-subtext">
+              Click on any layer in your design to add reference metadata
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="landscapeNotes" class="input-label">Notes</label>
+            <textarea
+              id="landscapeNotes"
+              class="input-field textarea"
+              rows="10"
+              placeholder="Add your notes..."
+            ></textarea>
+          </div>
+
+          <button id="landscapeSaveBtn" class="primary-btn">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
+              ></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            Save Metadata
+          </button>
+
+          <div
+            id="landscape-status-indicator"
+            class="status-indicator"
+            style="display: none"
+          >
+            <span class="status-dot unsaved"></span>
+            <span>Draft saved automatically</span>
+          </div>
+        </div>
+
+        <!-- Explore detail view for landscape -->
+        <div id="landscape-main-explore" class="landscape-main-content">
+          <div id="element-detail" class="element-detail">
+            <div class="element-detail-empty">
+              <div class="empty-state-icon">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="28"
+                  height="28"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </div>
+              <div class="empty-state-text">
+                Select an element from the list
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="resize-handle" id="landscape-resize-handle"></div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div id="settings-panel" class="settings-panel">
+      <div class="settings-header">
+        <div class="settings-title">Plugin Settings</div>
+        <button id="close-settings" class="close-btn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="settings-group">
+        <label class="settings-label">Layout</label>
+        <div class="toggle-group">
+          <div class="toggle-option active" data-value="portrait">Portrait</div>
+          <div class="toggle-option" data-value="landscape">Landscape</div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <label class="settings-label">Theme</label>
+        <div class="toggle-group">
+          <div class="toggle-option active" data-value="light">Light</div>
+          <div class="toggle-option" data-value="dark">Dark</div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="switch-container">
+          <label class="settings-label">Auto-save drafts</label>
+          <label class="switch">
+            <input type="checkbox" id="autosave-toggle" checked />
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Element Detail Template (will be cloned for explore tab) -->
+    <template id="element-detail-template">
+      <div class="element-detail-header">
+        <div class="element-detail-icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polygon
+              points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"
+            ></polygon>
             <line x1="8" y1="2" x2="8" y2="18"></line>
             <line x1="16" y1="6" x2="16" y2="22"></line>
           </svg>
         </div>
-        <div class="layer-details">
-          <div id="layerName" class="layer-name">Layer name</div>
-          <div class="layer-type">Selected Element</div>
+        <div class="element-detail-info">
+          <h3 class="element-detail-title"></h3>
+          <div class="element-detail-type"></div>
+        </div>
+        <div class="element-detail-actions">
+          <button class="icon-btn go-to-element">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"
+              ></path>
+            </svg>
+          </button>
         </div>
       </div>
-      
-      <div id="metadata-form">
-        <div class="form-group">
-          <label for="sourceUrl" class="input-label">Source URL</label>
-          <input type="url" id="sourceUrl" class="input-field" placeholder="https://..." />
-          <div class="url-actions">
-            <button id="openLink" class="action-btn" style="display: none;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+      <div class="element-detail-content">
+        <div class="detail-section">
+          <div class="detail-label">Source URL</div>
+          <div class="detail-source-url"></div>
+          <div class="detail-url-actions">
+            <button class="action-btn detail-open-url">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                ></path>
                 <polyline points="15 3 21 3 21 9"></polyline>
                 <line x1="10" y1="14" x2="21" y2="3"></line>
               </svg>
               Open link
             </button>
-            <button id="copyLink" class="action-btn" style="display: none;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <button class="action-btn detail-copy-url">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                <path
+                  d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+                ></path>
               </svg>
               Copy link
             </button>
           </div>
         </div>
-        
-        <div class="form-group">
-          <label for="tagInput" class="input-label">Tags</label>
-          <div class="tags-input-wrapper">
-            <input type="text" id="tagInput" class="input-field" placeholder="Add tags... (press Enter)" />
-            <div id="tagSuggestions" class="tag-suggestions"></div>
-            <div id="tagsContainer" class="tags-container"></div>
-          </div>
+
+        <div class="detail-section">
+          <div class="detail-label">Tags</div>
+          <div class="detail-tags"></div>
         </div>
-        
-        <div class="form-group">
-          <label for="notes" class="input-label">Notes</label>
-          <textarea id="notes" class="input-field textarea" placeholder="Add your notes..."></textarea>
+
+        <div class="detail-section">
+          <div class="detail-label">Notes</div>
+          <div class="detail-notes"></div>
         </div>
-        
-        <button id="saveBtn" class="primary-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-            <polyline points="17 21 17 13 7 13 7 21"></polyline>
-            <polyline points="7 3 7 8 15 8"></polyline>
-          </svg>
-          Save Metadata
-        </button>
-        
-        <div id="status-indicator" class="status-indicator" style="display: none;">
-          <span class="status-dot unsaved"></span>
-          <span>Draft saved automatically</span>
+
+        <div class="detail-section">
+          <div class="detail-label">Last Modified</div>
+          <div class="detail-last-modified"></div>
         </div>
       </div>
-      
-      <!-- Empty state - shown when no layer is selected -->
-      <div id="empty-state" class="empty-state" style="display: none;">
-        <div class="empty-state-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="9" y1="3" x2="9" y2="21"></line>
-          </svg>
-        </div>
-        <div class="empty-state-text">Select an element to begin</div>
-        <div class="empty-state-subtext">Click on any layer in your design to add reference metadata</div>
-      </div>
-    </div>
-    
-    <div class="resize-handle" id="resize-handle"></div>
-  </div>
-  
-  <!-- Landscape Layout -->
-  <div id="landscape-container" class="landscape-container" style="display: none;">
-    <div class="landscape-sidebar">
-      <div class="header">
-        <div class="logo">
-          <div class="logo-icon">DT</div>
-        </div>
-        <button id="landscape-settings-trigger" class="icon-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-          </svg>
-        </button>
-      </div>
-      
-      <div id="landscape-layer-info" class="layer-card" style="margin: 16px; display: none;">
-        <div class="layer-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+    </template>
+
+    <!-- Element List Item Template (will be cloned for explore tab) -->
+    <template id="element-list-item-template">
+      <div class="element-list-item">
+        <div class="element-list-icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polygon
+              points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"
+            ></polygon>
             <line x1="8" y1="2" x2="8" y2="18"></line>
             <line x1="16" y1="6" x2="16" y2="22"></line>
           </svg>
         </div>
-        <div class="layer-details">
-          <div id="landscapeLayerName" class="layer-name">Layer name</div>
-          <div class="layer-type">Selected Element</div>
+        <div class="element-list-info">
+          <div class="element-list-name"></div>
+          <div class="element-list-tags"></div>
         </div>
-      </div>
-      
-      <div class="main-content">
-        <div id="landscape-message-container"></div>
-        
-        <div class="form-group">
-          <label for="landscapeSourceUrl" class="input-label">Source URL</label>
-          <input type="url" id="landscapeSourceUrl" class="input-field" placeholder="https://..." />
-          <div class="url-actions">
-            <button id="landscapeOpenLink" class="action-btn" style="display: none;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                <polyline points="15 3 21 3 21 9"></polyline>
-                <line x1="10" y1="14" x2="21" y2="3"></line>
-              </svg>
-              Open
-            </button>
-            <button id="landscapeCopyLink" class="action-btn" style="display: none;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-              </svg>
-              Copy
-            </button>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label for="landscapeTagInput" class="input-label">Tags</label>
-          <div class="tags-input-wrapper">
-            <input type="text" id="landscapeTagInput" class="input-field" placeholder="Add tags... (press Enter)" />
-            <div id="landscapeTagSuggestions" class="tag-suggestions"></div>
-            <div id="landscapeTagsContainer" class="tags-container"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="landscape-main">
-      <div id="landscape-empty-state" class="empty-state" style="display: none;">
-        <div class="empty-state-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="9" y1="3" x2="9" y2="21"></line>
+        <button class="icon-btn element-list-goto">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"
+            ></path>
           </svg>
-        </div>
-        <div class="empty-state-text">Select an element to begin</div>
-        <div class="empty-state-subtext">Click on any layer in your design to add reference metadata</div>
+        </button>
       </div>
-      
-      <div class="form-group">
-        <label for="landscapeNotes" class="input-label">Notes</label>
-        <textarea id="landscapeNotes" class="input-field textarea" rows="10" placeholder="Add your notes..."></textarea>
-      </div>
-      
-      <button id="landscapeSaveBtn" class="primary-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-          <polyline points="17 21 17 13 7 13 7 21"></polyline>
-          <polyline points="7 3 7 8 15 8"></polyline>
-        </svg>
-        Save Metadata
-      </button>
-      
-      <div id="landscape-status-indicator" class="status-indicator" style="display: none;">
-        <span class="status-dot unsaved"></span>
-        <span>Draft saved automatically</span>
-      </div>
+    </template>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+      <div class="toast-icon">✓</div>
+      <span id="toast-message">URL copied to clipboard</span>
     </div>
-    
-    <div class="resize-handle" id="landscape-resize-handle"></div>
-  </div>
-  
-  <!-- Settings Panel -->
-  <div id="settings-panel" class="settings-panel">
-    <div class="settings-header">
-      <div class="settings-title">Plugin Settings</div>
-      <button id="close-settings" class="close-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-    </div>
-    
-    <div class="settings-group">
-      <label class="settings-label">Layout</label>
-      <div class="toggle-group">
-        <div class="toggle-option active" data-value="portrait">Portrait</div>
-        <div class="toggle-option" data-value="landscape">Landscape</div>
-      </div>
-    </div>
-    
-    <div class="settings-group">
-      <label class="settings-label">Theme</label>
-      <div class="toggle-group">
-        <div class="toggle-option active" data-value="light">Light</div>
-        <div class="toggle-option" data-value="dark">Dark</div>
-      </div>
-    </div>
-    
-    <div class="settings-group">
-      <div class="switch-container">
-        <label class="settings-label">Auto-save drafts</label>
-        <label class="switch">
-          <input type="checkbox" id="autosave-toggle" checked>
-          <span class="switch-slider"></span>
-        </label>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Toast Notification -->
-  <div id="toast" class="toast">
-    <div class="toast-icon">✓</div>
-    <span id="toast-message">URL copied to clipboard</span>
-  </div>
-  
-  <script>
-    let currentTags = [];
-    let currentNodeName = '';
-    let preferences = {
-      layout: 'portrait',
-      theme: 'light',
-      autosave: true
-    };
-    let autosaveTimer = null;
-    let allTags = []; // For tag suggestions
-    
-    document.addEventListener('DOMContentLoaded', function() {
-      // Initialize
-      parent.postMessage({ pluginMessage: { type: 'get-metadata' } }, '*');
-      parent.postMessage({ pluginMessage: { type: 'get-all-tags' } }, '*');
-      
-      // Settings panel toggle
-      document.getElementById('settings-trigger').addEventListener('click', function() {
-        const panel = document.getElementById('settings-panel');
-        panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+    <script>
+      // Global state
+      let currentTags = [];
+      let currentNodeName = "";
+      let currentNodeId = "";
+      let preferences = {
+        layout: "portrait",
+        theme: "light",
+        autosave: true,
+      };
+      let autosaveTimer = null;
+      let allTags = []; // For tag suggestions
+      let allElements = []; // For explore tab
+      let activeTab = "metadata";
+      let activeFilterTags = []; // For filtering elements in explore tab
+
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialize
+        parent.postMessage({ pluginMessage: { type: "get-metadata" } }, "*");
+        parent.postMessage({ pluginMessage: { type: "get-all-tags" } }, "*");
+        parent.postMessage(
+          { pluginMessage: { type: "get-all-elements" } },
+          "*"
+        );
+
+        // Tab switching
+        setupTabSwitching();
+
+        // Settings panel toggle
+        setupSettingsPanel();
+
+        // Tag input handling
+        setupTagInputs();
+
+        // URL field handling
+        setupUrlFields();
+
+        // Save buttons
+        setupSaveButtons();
+
+        // Resize functionality
+        setupResizeHandles();
+
+        // Listen for messages from the plugin
+        setupPluginMessageListener();
+
+        // Handle clicks outside the settings panel
+        setupOutsideClickHandling();
       });
-      
-      document.getElementById('landscape-settings-trigger').addEventListener('click', function() {
-        const panel = document.getElementById('settings-panel');
-        panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-      });
-      
-      document.getElementById('close-settings').addEventListener('click', function() {
-        document.getElementById('settings-panel').style.display = 'none';
-      });
-      
-      // Settings options
-      document.querySelectorAll('.toggle-option').forEach(option => {
-        option.addEventListener('click', function() {
-          // Update UI
-          const parent = this.parentElement;
-          parent.querySelectorAll('.toggle-option').forEach(opt => {
-            opt.classList.remove('active');
+
+      // Tab switching functionality
+      function setupTabSwitching() {
+        // Portrait tabs
+        document.querySelectorAll(".tab-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const tabName = this.getAttribute("data-tab");
+            switchTab(tabName);
           });
-          this.classList.add('active');
-          
-          // Get setting type and value
-          const settingType = parent.parentElement.querySelector('label').textContent.toLowerCase().trim();
-          const value = this.getAttribute('data-value');
-          
-          // Update preferences
-          if (settingType === 'layout') {
-            preferences.layout = value;
-            updateLayout(value);
-          } else if (settingType === 'theme') {
-            preferences.theme = value;
-            updateTheme(value);
-          }
-          
-          // Save preferences
-          parent.postMessage({ 
-            pluginMessage: { 
-              type: 'update-preferences', 
-              preferences 
-            } 
-          }, '*');
         });
-      });
-      
-      // Autosave toggle
-      document.getElementById('autosave-toggle').addEventListener('change', function() {
-        preferences.autosave = this.checked;
-        updateAutosave();
-        
-        // Save preferences
-        parent.postMessage({ 
-          pluginMessage: { 
-            type: 'update-preferences', 
-            preferences 
-          } 
-        }, '*');
-      });
-      
-      // Tag input handling (Portrait)
-      const tagInput = document.getElementById('tagInput');
-      tagInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && this.value.trim() !== '') {
-          addTag(this.value.trim());
-          this.value = '';
-          e.preventDefault();
-          autosaveDraft();
-        }
-      });
-      
-      tagInput.addEventListener('input', function() {
-        showTagSuggestions(this.value.trim(), 'tagSuggestions');
-      });
-      
-      tagInput.addEventListener('blur', function() {
-        setTimeout(() => {
-          document.getElementById('tagSuggestions').style.display = 'none';
-        }, 200);
-      });
-      
-      // Tag input handling (Landscape)
-      const landscapeTagInput = document.getElementById('landscapeTagInput');
-      landscapeTagInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && this.value.trim() !== '') {
-          addTag(this.value.trim());
-          this.value = '';
-          e.preventDefault();
-          autosaveDraft();
-        }
-      });
-      
-      landscapeTagInput.addEventListener('input', function() {
-        showTagSuggestions(this.value.trim(), 'landscapeTagSuggestions');
-      });
-      
-      landscapeTagInput.addEventListener('blur', function() {
-        setTimeout(() => {
-          document.getElementById('landscapeTagSuggestions').style.display = 'none';
-        }, 200);
-      });
-      
-      // Source URL input for open/copy link buttons (Portrait)
-      document.getElementById('sourceUrl').addEventListener('input', function() {
-        const url = this.value.trim();
-        const openLinkBtn = document.getElementById('openLink');
-        const copyLinkBtn = document.getElementById('copyLink');
-        
-        if (url) {
-          openLinkBtn.style.display = 'inline-flex';
-          copyLinkBtn.style.display = 'inline-flex';
-        } else {
-          openLinkBtn.style.display = 'none';
-          copyLinkBtn.style.display = 'none';
-        }
-        
-        // Sync with landscape view
-        document.getElementById('landscapeSourceUrl').value = url;
-        syncUrlButtons();
-        
-        autosaveDraft();
-      });
-      
-      // Source URL input for open/copy link buttons (Landscape)
-      document.getElementById('landscapeSourceUrl').addEventListener('input', function() {
-        const url = this.value.trim();
-        
-        // Sync with portrait view
-        document.getElementById('sourceUrl').value = url;
-        syncUrlButtons();
-        
-        autosaveDraft();
-      });
-      
-      // Notes input (Portrait)
-      document.getElementById('notes').addEventListener('input', function() {
-        // Sync with landscape view
-        document.getElementById('landscapeNotes').value = this.value;
-        autosaveDraft();
-      });
-      
-      // Notes input (Landscape)
-      document.getElementById('landscapeNotes').addEventListener('input', function() {
-        // Sync with portrait view
-        document.getElementById('notes').value = this.value;
-        autosaveDraft();
-      });
-      
-      // Open link (Portrait)
-      document.getElementById('openLink').addEventListener('click', function() {
-        const url = document.getElementById('sourceUrl').value.trim();
-        if (url) {
-          window.open(url, '_blank');
-        }
-      });
-      
-      // Open link (Landscape)
-      document.getElementById('landscapeOpenLink').addEventListener('click', function() {
-        const url = document.getElementById('landscapeSourceUrl').value.trim();
-        if (url) {
-          window.open(url, '_blank');
-        }
-      });
-      
-      // Copy link (Portrait)
-      document.getElementById('copyLink').addEventListener('click', function() {
-        const url = document.getElementById('sourceUrl').value.trim();
-        if (url) {
-          navigator.clipboard.writeText(url).then(() => {
-            showToast('URL copied to clipboard');
+
+        // Landscape tabs
+        document.querySelectorAll(".landscape-tabs .tab-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const tabName = this.getAttribute("data-tab");
+            switchTab(tabName, true);
           });
-        }
-      });
-      
-      // Copy link (Landscape)
-      document.getElementById('landscapeCopyLink').addEventListener('click', function() {
-        const url = document.getElementById('landscapeSourceUrl').value.trim();
-        if (url) {
-          navigator.clipboard.writeText(url).then(() => {
-            showToast('URL copied to clipboard');
-          });
-        }
-      });
-      
-      // Save button (Portrait)
-      document.getElementById('saveBtn').addEventListener('click', function() {
-        saveMetadata();
-      });
-      
-      // Save button (Landscape)
-      document.getElementById('landscapeSaveBtn').addEventListener('click', function() {
-        saveMetadata();
-      });
-      
-      // Resize functionality
-      const resizeHandle = document.getElementById('resize-handle');
-      const landscapeResizeHandle = document.getElementById('landscape-resize-handle');
-      
-      let isResizing = false;
-      let startWidth, startHeight;
-      
-      const startResize = (e) => {
-        isResizing = true;
-        startWidth = window.innerWidth;
-        startHeight = window.innerHeight;
-        document.addEventListener('mousemove', resize);
-        document.addEventListener('mouseup', stopResize);
-        e.preventDefault();
-      };
-      
-      const resize = (e) => {
-        if (!isResizing) return;
-        
-        const newWidth = startWidth + (e.clientX - startWidth);
-        const newHeight = startHeight + (e.clientY - startHeight);
-        
-        // Minimum size constraints
-        const minWidth = preferences.layout === 'landscape' ? 580 : 280;
-        const minHeight = preferences.layout === 'landscape' ? 300 : 400;
-        
-        const width = Math.max(minWidth, newWidth);
-        const height = Math.max(minHeight, newHeight);
-        
-        // Tell the plugin to resize
-        parent.postMessage({
-          pluginMessage: {
-            type: 'resize',
-            width,
-            height
+        });
+      }
+
+      function switchTab(tabName, isLandscape = false) {
+        activeTab = tabName;
+
+        // Update tab buttons
+        const tabSelector = isLandscape
+          ? ".landscape-tabs .tab-btn"
+          : ".tabs-navigation:not(.landscape-tabs) .tab-btn";
+        document.querySelectorAll(tabSelector).forEach((btn) => {
+          btn.classList.remove("active");
+          if (btn.getAttribute("data-tab") === tabName) {
+            btn.classList.add("active");
           }
-        }, '*');
-      };
-      
-      const stopResize = () => {
-        isResizing = false;
-        document.removeEventListener('mousemove', resize);
-        document.removeEventListener('mouseup', stopResize);
-      };
-      
-      resizeHandle.addEventListener('mousedown', startResize);
-      landscapeResizeHandle.addEventListener('mousedown', startResize);
-      
-      // Listen for messages from the plugin
-      window.onmessage = (event) => {
-        const msg = event.data.pluginMessage;
-        
-        if (msg.type === 'init-preferences') {
-          preferences = msg.preferences;
-          updateLayout(preferences.layout);
-          updateTheme(preferences.theme);
-          updateAutosave();
-          
-          // Update autosave toggle
-          document.getElementById('autosave-toggle').checked = preferences.autosave;
-          
-          // Update settings panel to match preferences
-          document.querySelectorAll('.toggle-group').forEach(group => {
-            const label = group.parentElement.querySelector('label').textContent.toLowerCase().trim();
-            let value;
-            
-            if (label === 'layout') value = preferences.layout;
-            else if (label === 'theme') value = preferences.theme;
-            
-            if (value) {
-              group.querySelectorAll('.toggle-option').forEach(option => {
-                option.classList.remove('active');
-                if (option.getAttribute('data-value') === value) {
-                  option.classList.add('active');
-                }
+        });
+
+        // Update tab content visibility
+        if (isLandscape) {
+          // Handle landscape tabs
+          document.querySelectorAll(".landscape-tab").forEach((tab) => {
+            tab.classList.remove("active");
+          });
+          document
+            .getElementById(`landscape-${tabName}-tab`)
+            .classList.add("active");
+
+          // Update main content in landscape mode
+          document
+            .querySelectorAll(".landscape-main-content")
+            .forEach((content) => {
+              content.classList.remove("active");
+            });
+          document
+            .getElementById(`landscape-main-${tabName}`)
+            .classList.add("active");
+        } else {
+          // Handle portrait tabs
+          document
+            .querySelectorAll(".tab-content:not(.landscape-tab)")
+            .forEach((tab) => {
+              tab.classList.remove("active");
+            });
+          document.getElementById(`${tabName}-tab`).classList.add("active");
+        }
+
+        // If switching to explore tab and we haven't loaded elements yet
+        if (tabName === "explore" && allElements.length === 0) {
+          parent.postMessage(
+            { pluginMessage: { type: "get-all-elements" } },
+            "*"
+          );
+        }
+
+        // Also switch the other layout's tabs to maintain consistency
+        if (!isLandscape) {
+          const landscapeTabBtn = document.querySelector(
+            `.landscape-tabs .tab-btn[data-tab="${tabName}"]`
+          );
+          if (landscapeTabBtn) {
+            landscapeTabBtn.click();
+          }
+        } else {
+          const portraitTabBtn = document.querySelector(
+            `.tabs-navigation:not(.landscape-tabs) .tab-btn[data-tab="${tabName}"]`
+          );
+          if (portraitTabBtn) {
+            portraitTabBtn.click();
+          }
+        }
+      }
+
+      // Settings panel functionality
+      function setupSettingsPanel() {
+        document
+          .getElementById("settings-trigger")
+          .addEventListener("click", function () {
+            const panel = document.getElementById("settings-panel");
+            panel.style.display =
+              panel.style.display === "block" ? "none" : "block";
+          });
+
+        document
+          .getElementById("landscape-settings-trigger")
+          .addEventListener("click", function () {
+            const panel = document.getElementById("settings-panel");
+            panel.style.display =
+              panel.style.display === "block" ? "none" : "block";
+          });
+
+        document
+          .getElementById("close-settings")
+          .addEventListener("click", function () {
+            document.getElementById("settings-panel").style.display = "none";
+          });
+
+        // Settings options
+        document.querySelectorAll(".toggle-option").forEach((option) => {
+          option.addEventListener("click", function () {
+            // Update UI
+            const parent = this.parentElement;
+            parent.querySelectorAll(".toggle-option").forEach((opt) => {
+              opt.classList.remove("active");
+            });
+            this.classList.add("active");
+
+            // Get setting type and value
+            const settingType = parent.parentElement
+              .querySelector("label")
+              .textContent.toLowerCase()
+              .trim();
+            const value = this.getAttribute("data-value");
+
+            // Update preferences
+            if (settingType === "layout") {
+              preferences.layout = value;
+              updateLayout(value);
+            } else if (settingType === "theme") {
+              preferences.theme = value;
+              updateTheme(value);
+            }
+
+            // Save preferences
+            parent.postMessage(
+              {
+                pluginMessage: {
+                  type: "update-preferences",
+                  preferences,
+                },
+              },
+              "*"
+            );
+          });
+        });
+
+        // Autosave toggle
+        document
+          .getElementById("autosave-toggle")
+          .addEventListener("change", function () {
+            preferences.autosave = this.checked;
+            updateAutosave();
+
+            // Save preferences
+            parent.postMessage(
+              {
+                pluginMessage: {
+                  type: "update-preferences",
+                  preferences,
+                },
+              },
+              "*"
+            );
+          });
+      }
+
+      // Tag input handling
+      function setupTagInputs() {
+        // Portrait tag input
+        const tagInput = document.getElementById("tagInput");
+        tagInput.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" && this.value.trim() !== "") {
+            addTag(this.value.trim());
+            this.value = "";
+            e.preventDefault();
+            autosaveDraft();
+          }
+        });
+
+        tagInput.addEventListener("input", function () {
+          showTagSuggestions(this.value.trim(), "tagSuggestions");
+        });
+
+        tagInput.addEventListener("blur", function () {
+          setTimeout(() => {
+            document.getElementById("tagSuggestions").style.display = "none";
+          }, 200);
+        });
+
+        // Landscape tag input
+        const landscapeTagInput = document.getElementById("landscapeTagInput");
+        landscapeTagInput.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" && this.value.trim() !== "") {
+            addTag(this.value.trim());
+            this.value = "";
+            e.preventDefault();
+            autosaveDraft();
+          }
+        });
+
+        landscapeTagInput.addEventListener("input", function () {
+          showTagSuggestions(this.value.trim(), "landscapeTagSuggestions");
+        });
+
+        landscapeTagInput.addEventListener("blur", function () {
+          setTimeout(() => {
+            document.getElementById("landscapeTagSuggestions").style.display =
+              "none";
+          }, 200);
+        });
+      }
+
+      // URL field handling
+      function setupUrlFields() {
+        // Source URL input for portrait
+        document
+          .getElementById("sourceUrl")
+          .addEventListener("input", function () {
+            const url = this.value.trim();
+            const openLinkBtn = document.getElementById("openLink");
+            const copyLinkBtn = document.getElementById("copyLink");
+
+            if (url) {
+              openLinkBtn.style.display = "inline-flex";
+              copyLinkBtn.style.display = "inline-flex";
+            } else {
+              openLinkBtn.style.display = "none";
+              copyLinkBtn.style.display = "none";
+            }
+
+            // Sync with landscape view
+            document.getElementById("landscapeSourceUrl").value = url;
+            syncUrlButtons();
+
+            autosaveDraft();
+          });
+
+        // Source URL input for landscape
+        document
+          .getElementById("landscapeSourceUrl")
+          .addEventListener("input", function () {
+            const url = this.value.trim();
+
+            // Sync with portrait view
+            document.getElementById("sourceUrl").value = url;
+            syncUrlButtons();
+
+            autosaveDraft();
+          });
+
+        // Notes input for portrait
+        document.getElementById("notes").addEventListener("input", function () {
+          // Sync with landscape view
+          document.getElementById("landscapeNotes").value = this.value;
+          autosaveDraft();
+        });
+
+        // Notes input for landscape
+        document
+          .getElementById("landscapeNotes")
+          .addEventListener("input", function () {
+            // Sync with portrait view
+            document.getElementById("notes").value = this.value;
+            autosaveDraft();
+          });
+
+        // Open link for portrait
+        document
+          .getElementById("openLink")
+          .addEventListener("click", function () {
+            const url = document.getElementById("sourceUrl").value.trim();
+            if (url) {
+              window.open(url, "_blank");
+            }
+          });
+
+        // Open link for landscape
+        document
+          .getElementById("landscapeOpenLink")
+          .addEventListener("click", function () {
+            const url = document
+              .getElementById("landscapeSourceUrl")
+              .value.trim();
+            if (url) {
+              window.open(url, "_blank");
+            }
+          });
+
+        // Copy link for portrait
+        document
+          .getElementById("copyLink")
+          .addEventListener("click", function () {
+            const url = document.getElementById("sourceUrl").value.trim();
+            if (url) {
+              navigator.clipboard.writeText(url).then(() => {
+                showToast("URL copied to clipboard");
               });
             }
           });
-        }
-        else if (msg.type === 'metadata-loaded') {
-          displayMetadata(msg.data);
-          updateLayerInfo(msg.nodeName);
-          toggleEmptyState(false);
-        } 
-        else if (msg.type === 'draft-loaded') {
-          displayMetadata(msg.data);
-          updateLayerInfo(msg.nodeName);
-          displayMessage('Continuing from your unsaved draft', 'info');
-          toggleEmptyState(false);
-          
-          // Show draft indicator
-          document.getElementById('status-indicator').style.display = 'flex';
-          document.getElementById('landscape-status-indicator').style.display = 'flex';
-        } 
-        else if (msg.type === 'new-element') {
-          clearForm();
-          updateLayerInfo(msg.nodeName);
-          displayMessage('Add metadata to this element', 'info');
-          toggleEmptyState(false);
-        } 
-        else if (msg.type === 'no-selection') {
-          displayMessage('Select an element to view or edit its metadata', 'warning');
-          clearForm();
-          toggleEmptyState(true);
-        }
-        else if (msg.type === 'selection-changed') {
-          parent.postMessage({ pluginMessage: { type: 'get-metadata' } }, '*');
-        }
-        else if (msg.type === 'all-tags') {
-          allTags = msg.tags || [];
-        }
-      };
-      
-      // Handle clicks outside the settings panel
-      document.addEventListener('click', function(event) {
-        const panel = document.getElementById('settings-panel');
-        const settingsTrigger = document.getElementById('settings-trigger');
-        const landscapeSettingsTrigger = document.getElementById('landscape-settings-trigger');
-        const closeBtn = document.getElementById('close-settings');
-        
-        if (panel.style.display === 'block' && 
-            !panel.contains(event.target) && 
+
+        // Copy link for landscape
+        document
+          .getElementById("landscapeCopyLink")
+          .addEventListener("click", function () {
+            const url = document
+              .getElementById("landscapeSourceUrl")
+              .value.trim();
+            if (url) {
+              navigator.clipboard.writeText(url).then(() => {
+                showToast("URL copied to clipboard");
+              });
+            }
+          });
+      }
+
+      // Save button functionality
+      function setupSaveButtons() {
+        // Save button for portrait
+        document
+          .getElementById("saveBtn")
+          .addEventListener("click", function () {
+            saveMetadata();
+          });
+
+        // Save button for landscape
+        document
+          .getElementById("landscapeSaveBtn")
+          .addEventListener("click", function () {
+            saveMetadata();
+          });
+      }
+
+      // Resize functionality
+      function setupResizeHandles() {
+        const resizeHandle = document.getElementById("resize-handle");
+        const landscapeResizeHandle = document.getElementById(
+          "landscape-resize-handle"
+        );
+
+        let isResizing = false;
+        let startWidth, startHeight;
+
+        const startResize = (e) => {
+          isResizing = true;
+          startWidth = window.innerWidth;
+          startHeight = window.innerHeight;
+          document.addEventListener("mousemove", resize);
+          document.addEventListener("mouseup", stopResize);
+          e.preventDefault();
+        };
+
+        const resize = (e) => {
+          if (!isResizing) return;
+
+          const newWidth = startWidth + (e.clientX - startWidth);
+          const newHeight = startHeight + (e.clientY - startHeight);
+
+          // Minimum size constraints
+          const minWidth = preferences.layout === "landscape" ? 580 : 280;
+          const minHeight = preferences.layout === "landscape" ? 300 : 400;
+
+          const width = Math.max(minWidth, newWidth);
+          const height = Math.max(minHeight, newHeight);
+
+          // Tell the plugin to resize
+          parent.postMessage(
+            {
+              pluginMessage: {
+                type: "resize",
+                width,
+                height,
+              },
+            },
+            "*"
+          );
+        };
+
+        const stopResize = () => {
+          isResizing = false;
+          document.removeEventListener("mousemove", resize);
+          document.removeEventListener("mouseup", stopResize);
+        };
+
+        resizeHandle.addEventListener("mousedown", startResize);
+        landscapeResizeHandle.addEventListener("mousedown", startResize);
+      }
+
+      // Plugin message listener
+      function setupPluginMessageListener() {
+        window.onmessage = (event) => {
+          const msg = event.data.pluginMessage;
+
+          if (msg.type === "init-preferences") {
+            preferences = msg.preferences;
+            updateLayout(preferences.layout);
+            updateTheme(preferences.theme);
+            updateAutosave();
+
+            // Update autosave toggle
+            document.getElementById("autosave-toggle").checked =
+              preferences.autosave;
+
+            // Update settings panel to match preferences
+            document.querySelectorAll(".toggle-group").forEach((group) => {
+              const label = group.parentElement
+                .querySelector("label")
+                .textContent.toLowerCase()
+                .trim();
+              let value;
+
+              if (label === "layout") value = preferences.layout;
+              else if (label === "theme") value = preferences.theme;
+
+              if (value) {
+                group.querySelectorAll(".toggle-option").forEach((option) => {
+                  option.classList.remove("active");
+                  if (option.getAttribute("data-value") === value) {
+                    option.classList.add("active");
+                  }
+                });
+              }
+            });
+          } else if (msg.type === "metadata-loaded") {
+            displayMetadata(msg.data);
+            updateLayerInfo(msg.nodeName, msg.nodeId);
+            toggleEmptyState(false);
+          } else if (msg.type === "draft-loaded") {
+            displayMetadata(msg.data);
+            updateLayerInfo(msg.nodeName, msg.nodeId);
+            displayMessage("Continuing from your unsaved draft", "info");
+            toggleEmptyState(false);
+
+            // Show draft indicator
+            document.getElementById("status-indicator").style.display = "flex";
+            document.getElementById(
+              "landscape-status-indicator"
+            ).style.display = "flex";
+          } else if (msg.type === "new-element") {
+            clearForm();
+            updateLayerInfo(msg.nodeName, msg.nodeId);
+            displayMessage("Add metadata to this element", "info");
+            toggleEmptyState(false);
+          } else if (msg.type === "no-selection") {
+            displayMessage(
+              "Select an element to view or edit its metadata",
+              "warning"
+            );
+            clearForm();
+            toggleEmptyState(true);
+          } else if (msg.type === "selection-changed") {
+            parent.postMessage(
+              { pluginMessage: { type: "get-metadata" } },
+              "*"
+            );
+          } else if (msg.type === "all-tags") {
+            allTags = msg.tags || [];
+            updateFilterTags();
+          } else if (msg.type === "all-elements") {
+            allElements = msg.elements || [];
+            renderElementsList();
+
+            // Show empty state if no elements
+            const exploreEmptyState = document.getElementById(
+              "explore-empty-state"
+            );
+            if (allElements.length === 0) {
+              exploreEmptyState.style.display = "flex";
+            } else {
+              exploreEmptyState.style.display = "none";
+            }
+          }
+        };
+      }
+
+      // Outside click handling for settings panel
+      function setupOutsideClickHandling() {
+        document.addEventListener("click", function (event) {
+          const panel = document.getElementById("settings-panel");
+          const settingsTrigger = document.getElementById("settings-trigger");
+          const landscapeSettingsTrigger = document.getElementById(
+            "landscape-settings-trigger"
+          );
+          const closeBtn = document.getElementById("close-settings");
+
+          if (
+            panel.style.display === "block" &&
+            !panel.contains(event.target) &&
             event.target !== settingsTrigger &&
             event.target !== landscapeSettingsTrigger &&
             event.target !== closeBtn &&
             !settingsTrigger.contains(event.target) &&
-            !landscapeSettingsTrigger.contains(event.target)) {
-          panel.style.display = 'none';
-        }
-      });
-    });
-    
-    function showTagSuggestions(query, containerId) {
-      const container = document.getElementById(containerId);
-      
-      // Clear previous suggestions
-      container.innerHTML = '';
-      
-      if (!query || query.length < 2) {
-        container.style.display = 'none';
-        return;
-      }
-      
-      // Filter tags based on query
-      const filteredTags = allTags.filter(tag => 
-        tag.toLowerCase().includes(query.toLowerCase()) && 
-        !currentTags.includes(tag)
-      );
-      
-      if (filteredTags.length === 0) {
-        container.style.display = 'none';
-        return;
-      }
-      
-      // Create and append suggestion items
-      filteredTags.slice(0, 5).forEach(tag => {
-        const item = document.createElement('div');
-        item.className = 'tag-suggestion-item';
-        item.textContent = tag;
-        
-        item.addEventListener('click', () => {
-          addTag(tag);
-          
-          // Clear input and hide suggestions
-          if (containerId === 'tagSuggestions') {
-            document.getElementById('tagInput').value = '';
-          } else {
-            document.getElementById('landscapeTagInput').value = '';
+            !landscapeSettingsTrigger.contains(event.target)
+          ) {
+            panel.style.display = "none";
           }
-          
-          container.style.display = 'none';
-          autosaveDraft();
         });
-        
-        container.appendChild(item);
-      });
-      
-      container.style.display = 'block';
-    }
-    
-    function updateLayout(layout) {
-      if (layout === 'landscape') {
-        document.getElementById('portrait-container').style.display = 'none';
-        document.getElementById('landscape-container').style.display = 'flex';
-      } else {
-        document.getElementById('portrait-container').style.display = 'flex';
-        document.getElementById('landscape-container').style.display = 'none';
       }
-    }
-    
-    function updateTheme(theme) {
-      if (theme === 'dark') {
-        document.body.classList.add('dark-theme');
-      } else {
-        document.body.classList.remove('dark-theme');
+
+      // Show tag suggestions
+      function showTagSuggestions(query, containerId) {
+        const container = document.getElementById(containerId);
+
+        // Clear previous suggestions
+        container.innerHTML = "";
+
+        if (!query || query.length < 2) {
+          container.style.display = "none";
+          return;
+        }
+
+        // Filter tags based on query
+        const filteredTags = allTags.filter(
+          (tag) =>
+            tag.toLowerCase().includes(query.toLowerCase()) &&
+            !currentTags.includes(tag)
+        );
+
+        if (filteredTags.length === 0) {
+          container.style.display = "none";
+          return;
+        }
+
+        // Create and append suggestion items
+        filteredTags.slice(0, 5).forEach((tag) => {
+          const item = document.createElement("div");
+          item.className = "tag-suggestion-item";
+          item.textContent = tag;
+
+          item.addEventListener("click", () => {
+            addTag(tag);
+
+            // Clear input and hide suggestions
+            if (containerId === "tagSuggestions") {
+              document.getElementById("tagInput").value = "";
+            } else {
+              document.getElementById("landscapeTagInput").value = "";
+            }
+
+            container.style.display = "none";
+            autosaveDraft();
+          });
+
+          container.appendChild(item);
+        });
+
+        container.style.display = "block";
       }
-    }
-    
-    function updateAutosave() {
-      if (preferences.autosave) {
-        document.getElementById('status-indicator').style.display = 'flex';
-        document.getElementById('landscape-status-indicator').style.display = 'flex';
-      } else {
-        document.getElementById('status-indicator').style.display = 'none';
-        document.getElementById('landscape-status-indicator').style.display = 'none';
-        
-        // Clear any existing autosave timer
-        if (autosaveTimer) {
-          clearTimeout(autosaveTimer);
-          autosaveTimer = null;
+
+      // Update layout
+      function updateLayout(layout) {
+        if (layout === "landscape") {
+          document.getElementById("portrait-container").style.display = "none";
+          document.getElementById("landscape-container").style.display = "flex";
+        } else {
+          document.getElementById("portrait-container").style.display = "flex";
+          document.getElementById("landscape-container").style.display = "none";
         }
       }
-    }
-    
-    function syncUrlButtons() {
-      const url = document.getElementById('sourceUrl').value.trim();
-      const openLinkBtn = document.getElementById('openLink');
-      const copyLinkBtn = document.getElementById('copyLink');
-      const landscapeOpenLinkBtn = document.getElementById('landscapeOpenLink');
-      const landscapeCopyLinkBtn = document.getElementById('landscapeCopyLink');
-      
-      if (url) {
-        openLinkBtn.style.display = 'inline-flex';
-        copyLinkBtn.style.display = 'inline-flex';
-        landscapeOpenLinkBtn.style.display = 'inline-flex';
-        landscapeCopyLinkBtn.style.display = 'inline-flex';
-      } else {
-        openLinkBtn.style.display = 'none';
-        copyLinkBtn.style.display = 'none';
-        landscapeOpenLinkBtn.style.display = 'none';
-        landscapeCopyLinkBtn.style.display = 'none';
+
+      // Update theme
+      function updateTheme(theme) {
+        if (theme === "dark") {
+          document.body.classList.add("dark-theme");
+        } else {
+          document.body.classList.remove("dark-theme");
+        }
       }
-    }
-    
-    function toggleEmptyState(show) {
-      const emptyState = document.getElementById('empty-state');
-      const landscapeEmptyState = document.getElementById('landscape-empty-state');
-      const metadataForm = document.getElementById('metadata-form');
-      const landscapeForm = document.querySelector('.landscape-main .form-group');
-      const landscapeSaveBtn = document.getElementById('landscapeSaveBtn');
-      
-      if (show) {
-        emptyState.style.display = 'flex';
-        landscapeEmptyState.style.display = 'flex';
-        metadataForm.style.display = 'none';
-        landscapeForm.style.display = 'none';
-        landscapeSaveBtn.style.display = 'none';
-      } else {
-        emptyState.style.display = 'none';
-        landscapeEmptyState.style.display = 'none';
-        metadataForm.style.display = 'block';
-        landscapeForm.style.display = 'block';
-        landscapeSaveBtn.style.display = 'flex';
+
+      // Update autosave
+      function updateAutosave() {
+        if (preferences.autosave) {
+          document.getElementById("status-indicator").style.display = "flex";
+          document.getElementById("landscape-status-indicator").style.display =
+            "flex";
+        } else {
+          document.getElementById("status-indicator").style.display = "none";
+          document.getElementById("landscape-status-indicator").style.display =
+            "none";
+
+          // Clear any existing autosave timer
+          if (autosaveTimer) {
+            clearTimeout(autosaveTimer);
+            autosaveTimer = null;
+          }
+        }
       }
-    }
-    
-    function updateLayerInfo(nodeName) {
-      currentNodeName = nodeName;
-      
-      // Update portrait view
-      document.getElementById('layerName').textContent = nodeName;
-      document.getElementById('layer-info').style.display = 'flex';
-      
-      // Update landscape view
-      document.getElementById('landscapeLayerName').textContent = nodeName;
-      document.getElementById('landscape-layer-info').style.display = 'flex';
-    }
-    
-    function displayMetadata(data) {
-      // Clear any messages in both views
-      document.getElementById('message-container').innerHTML = '';
-      document.getElementById('landscape-message-container').innerHTML = '';
-      
-      const sourceUrl = data.sourceUrl || '';
-      const notes = data.notes || '';
-      
-      // Update portrait view
-      document.getElementById('sourceUrl').value = sourceUrl;
-      document.getElementById('notes').value = notes;
-      
-      // Update landscape view
-      document.getElementById('landscapeSourceUrl').value = sourceUrl;
-      document.getElementById('landscapeNotes').value = notes;
-      
-      // Update link buttons in portrait view
-      const openLinkBtn = document.getElementById('openLink');
-      const copyLinkBtn = document.getElementById('copyLink');
-      
-      if (sourceUrl) {
-        openLinkBtn.style.display = 'inline-flex';
-        copyLinkBtn.style.display = 'inline-flex';
-      } else {
-        openLinkBtn.style.display = 'none';
-        copyLinkBtn.style.display = 'none';
+
+      // Sync URL buttons
+      function syncUrlButtons() {
+        const url = document.getElementById("sourceUrl").value.trim();
+        const openLinkBtn = document.getElementById("openLink");
+        const copyLinkBtn = document.getElementById("copyLink");
+        const landscapeOpenLinkBtn =
+          document.getElementById("landscapeOpenLink");
+        const landscapeCopyLinkBtn =
+          document.getElementById("landscapeCopyLink");
+
+        if (url) {
+          openLinkBtn.style.display = "inline-flex";
+          copyLinkBtn.style.display = "inline-flex";
+          landscapeOpenLinkBtn.style.display = "inline-flex";
+          landscapeCopyLinkBtn.style.display = "inline-flex";
+        } else {
+          openLinkBtn.style.display = "none";
+          copyLinkBtn.style.display = "none";
+          landscapeOpenLinkBtn.style.display = "none";
+          landscapeCopyLinkBtn.style.display = "none";
+        }
       }
-      
-      // Update link buttons in landscape view
-      const landscapeOpenLinkBtn = document.getElementById('landscapeOpenLink');
-      const landscapeCopyLinkBtn = document.getElementById('landscapeCopyLink');
-      
-      if (sourceUrl) {
-        landscapeOpenLinkBtn.style.display = 'inline-flex';
-        landscapeCopyLinkBtn.style.display = 'inline-flex';
-      } else {
-        landscapeOpenLinkBtn.style.display = 'none';
-        landscapeCopyLinkBtn.style.display = 'none';
+
+      // Toggle empty state
+      function toggleEmptyState(show) {
+        const emptyState = document.getElementById("empty-state");
+        const landscapeEmptyState = document.getElementById(
+          "landscape-empty-state"
+        );
+        const metadataForm = document.getElementById("metadata-form");
+        const landscapeForm = document.querySelector(
+          ".landscape-main .form-group"
+        );
+        const landscapeSaveBtn = document.getElementById("landscapeSaveBtn");
+
+        if (show) {
+          emptyState.style.display = "flex";
+          landscapeEmptyState.style.display = "flex";
+          metadataForm.style.display = "none";
+          landscapeForm.style.display = "none";
+          landscapeSaveBtn.style.display = "none";
+        } else {
+          emptyState.style.display = "none";
+          landscapeEmptyState.style.display = "none";
+          metadataForm.style.display = "block";
+          landscapeForm.style.display = "block";
+          landscapeSaveBtn.style.display = "flex";
+        }
       }
-      
-      // Update tags
-      currentTags = data.tags || [];
-      updateTagsDisplay();
-      updateLandscapeTagsDisplay();
-    }
-    
-    function displayMessage(message, type = 'info') {
-      // Create message element
-      const messageElement = document.createElement('div');
-      messageElement.className = `message ${type}`;
-      
-      // Add icon based on message type
-      let iconSvg = '';
-      let title = '';
-      
-      if (type === 'warning') {
-        iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="message-icon">
-          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-          <line x1="12" y1="9" x2="12" y2="13"></line>
-          <line x1="12" y1="17" x2="12.01" y2="17"></line>
-        </svg>`;
-        title = 'Attention';
-      } else if (type === 'success') {
-        iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="message-icon">
-          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-          <polyline points="22 4 12 14.01 9 11.01"></polyline>
-        </svg>`;
-        title = 'Success';
-      } else {
-        iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="message-icon">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="16" x2="12" y2="12"></line>
-          <line x1="12" y1="8" x2="12.01" y2="8"></line>
-        </svg>`;
-        title = 'Info';
+
+      // Update layer info
+      function updateLayerInfo(nodeName, nodeId) {
+        currentNodeName = nodeName;
+        currentNodeId = nodeId;
+
+        // Update portrait view
+        document.getElementById("layerName").textContent = nodeName;
+        document.getElementById("layer-info").style.display = "flex";
+
+        // Update landscape view
+        document.getElementById("landscapeLayerName").textContent = nodeName;
+        document.getElementById("landscape-layer-info").style.display = "flex";
       }
-      
-      messageElement.innerHTML = `
-        ${iconSvg}
-        <div class="message-content">
-          <div class="message-title">${title}</div>
-          <div class="message-text">${message}</div>
-        </div>
-      `;
-      
-      // Update both portrait and landscape views
-      document.getElementById('message-container').innerHTML = '';
-      document.getElementById('message-container').appendChild(messageElement.cloneNode(true));
-      
-      document.getElementById('landscape-message-container').innerHTML = '';
-      document.getElementById('landscape-message-container').appendChild(messageElement);
-    }
-    
-    function clearForm() {
-      // Clear portrait view
-      document.getElementById('sourceUrl').value = '';
-      document.getElementById('notes').value = '';
-      document.getElementById('openLink').style.display = 'none';
-      document.getElementById('copyLink').style.display = 'none';
-      
-      // Clear landscape view
-      document.getElementById('landscapeSourceUrl').value = '';
-      document.getElementById('landscapeNotes').value = '';
-      document.getElementById('landscapeOpenLink').style.display = 'none';
-      document.getElementById('landscapeCopyLink').style.display = 'none';
-      
-      // Clear status indicators
-      document.getElementById('status-indicator').style.display = 'none';
-      document.getElementById('landscape-status-indicator').style.display = 'none';
-      
-      // Hide layer info
-      document.getElementById('layer-info').style.display = 'none';
-      document.getElementById('landscape-layer-info').style.display = 'none';
-      
-      // Clear tags
-      currentTags = [];
-      updateTagsDisplay();
-      updateLandscapeTagsDisplay();
-    }
-    
-    function addTag(tag) {
-      if (!currentTags.includes(tag)) {
-        currentTags.push(tag);
+
+      // Display metadata
+      function displayMetadata(data) {
+        // Clear any messages in both views
+        document.getElementById("message-container").innerHTML = "";
+        document.getElementById("landscape-message-container").innerHTML = "";
+
+        const sourceUrl = data.sourceUrl || "";
+        const notes = data.notes || "";
+
+        // Update portrait view
+        document.getElementById("sourceUrl").value = sourceUrl;
+        document.getElementById("notes").value = notes;
+
+        // Update landscape view
+        document.getElementById("landscapeSourceUrl").value = sourceUrl;
+        document.getElementById("landscapeNotes").value = notes;
+
+        // Update link buttons
+        syncUrlButtons();
+
+        // Update tags
+        currentTags = data.tags || [];
         updateTagsDisplay();
         updateLandscapeTagsDisplay();
       }
-    }
-    
-    function removeTag(tag) {
-      currentTags = currentTags.filter(t => t !== tag);
-      updateTagsDisplay();
-      updateLandscapeTagsDisplay();
-      autosaveDraft();
-    }
-    
-    function updateTagsDisplay() {
-      const container = document.getElementById('tagsContainer');
-      container.innerHTML = '';
-      
-      if (currentTags.length === 0) {
-        return;
-      }
-      
-      currentTags.forEach(tag => {
-        const tagElement = document.createElement('div');
-        tagElement.className = 'tag';
-        tagElement.innerHTML = `${tag} <span class="tag-remove">×</span>`;
-        
-        tagElement.querySelector('.tag-remove').addEventListener('click', function() {
-          removeTag(tag);
-        });
-        
-        container.appendChild(tagElement);
-      });
-    }
-    
-    function updateLandscapeTagsDisplay() {
-      const container = document.getElementById('landscapeTagsContainer');
-      container.innerHTML = '';
-      
-      if (currentTags.length === 0) {
-        return;
-      }
-      
-      currentTags.forEach(tag => {
-        const tagElement = document.createElement('div');
-        tagElement.className = 'tag';
-        tagElement.innerHTML = `${tag} <span class="tag-remove">×</span>`;
-        
-        tagElement.querySelector('.tag-remove').addEventListener('click', function() {
-          removeTag(tag);
-        });
-        
-        container.appendChild(tagElement);
-      });
-    }
-    
-    function saveMetadata() {
-      // Get values from form
-      const sourceUrl = document.getElementById('sourceUrl').value;
-      const notes = document.getElementById('notes').value;
-      
-      parent.postMessage({
-        pluginMessage: {
-          type: 'save-metadata',
-          sourceUrl,
-          tags: currentTags,
-          notes
+
+      // Display message
+      function displayMessage(message, type = "info") {
+        // Create message element
+        const messageElement = document.createElement("div");
+        messageElement.className = `message ${type}`;
+
+        // Add icon based on message type
+        let iconSvg = "";
+        let title = "";
+
+        if (type === "warning") {
+          iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="message-icon">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+      <line x1="12" y1="9" x2="12" y2="13"></line>
+      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+    </svg>`;
+          title = "Attention";
+        } else if (type === "success") {
+          iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="message-icon">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>`;
+          title = "Success";
+        } else {
+          iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="message-icon">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="16" x2="12" y2="12"></line>
+      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+    </svg>`;
+          title = "Info";
         }
-      }, '*');
-      
-      // Show success message
-      displayMessage('Metadata saved successfully!', 'success');
-      
-      // Hide draft indicator
-      document.getElementById('status-indicator').style.display = 'none';
-      document.getElementById('landscape-status-indicator').style.display = 'none';
-    }
-    
-    function autosaveDraft() {
-      if (!preferences.autosave) return;
-      
-      // Clear any existing timer
-      if (autosaveTimer) {
-        clearTimeout(autosaveTimer);
+
+        messageElement.innerHTML = `
+    ${iconSvg}
+    <div class="message-content">
+      <div class="message-title">${title}</div>
+      <div class="message-text">${message}</div>
+    </div>
+  `;
+
+        // Update both portrait and landscape views
+        document.getElementById("message-container").innerHTML = "";
+        document
+          .getElementById("message-container")
+          .appendChild(messageElement.cloneNode(true));
+
+        document.getElementById("landscape-message-container").innerHTML = "";
+        document
+          .getElementById("landscape-message-container")
+          .appendChild(messageElement);
       }
-      
-      // Set new timer to save after a short delay
-      autosaveTimer = setTimeout(() => {
+
+      // Clear form
+      function clearForm() {
+        // Clear portrait view
+        document.getElementById("sourceUrl").value = "";
+        document.getElementById("notes").value = "";
+        document.getElementById("openLink").style.display = "none";
+        document.getElementById("copyLink").style.display = "none";
+
+        // Clear landscape view
+        document.getElementById("landscapeSourceUrl").value = "";
+        document.getElementById("landscapeNotes").value = "";
+        document.getElementById("landscapeOpenLink").style.display = "none";
+        document.getElementById("landscapeCopyLink").style.display = "none";
+
+        // Clear status indicators
+        document.getElementById("status-indicator").style.display = "none";
+        document.getElementById("landscape-status-indicator").style.display =
+          "none";
+
+        // Hide layer info
+        document.getElementById("layer-info").style.display = "none";
+        document.getElementById("landscape-layer-info").style.display = "none";
+
+        // Clear tags
+        currentTags = [];
+        updateTagsDisplay();
+        updateLandscapeTagsDisplay();
+
+        // Clear node ID
+        currentNodeId = "";
+      }
+
+      // Add tag
+      function addTag(tag) {
+        if (!currentTags.includes(tag)) {
+          currentTags.push(tag);
+          updateTagsDisplay();
+          updateLandscapeTagsDisplay();
+        }
+      }
+
+      // Remove tag
+      function removeTag(tag) {
+        currentTags = currentTags.filter((t) => t !== tag);
+        updateTagsDisplay();
+        updateLandscapeTagsDisplay();
+        autosaveDraft();
+      }
+
+      // Update tags display for portrait
+      function updateTagsDisplay() {
+        const container = document.getElementById("tagsContainer");
+        container.innerHTML = "";
+
+        if (currentTags.length === 0) {
+          return;
+        }
+
+        currentTags.forEach((tag) => {
+          const tagElement = document.createElement("div");
+          tagElement.className = "tag";
+          tagElement.innerHTML = `${tag} <span class="tag-remove">×</span>`;
+
+          tagElement
+            .querySelector(".tag-remove")
+            .addEventListener("click", function () {
+              removeTag(tag);
+            });
+
+          container.appendChild(tagElement);
+        });
+      }
+
+      // Update tags display for landscape
+      function updateLandscapeTagsDisplay() {
+        const container = document.getElementById("landscapeTagsContainer");
+        container.innerHTML = "";
+
+        if (currentTags.length === 0) {
+          return;
+        }
+
+        currentTags.forEach((tag) => {
+          const tagElement = document.createElement("div");
+          tagElement.className = "tag";
+          tagElement.innerHTML = `${tag} <span class="tag-remove">×</span>`;
+
+          tagElement
+            .querySelector(".tag-remove")
+            .addEventListener("click", function () {
+              removeTag(tag);
+            });
+
+          container.appendChild(tagElement);
+        });
+      }
+
+      // Save metadata
+      function saveMetadata() {
         // Get values from form
-        const sourceUrl = document.getElementById('sourceUrl').value;
-        const notes = document.getElementById('notes').value;
-        
-        parent.postMessage({
-          pluginMessage: {
-            type: 'save-draft',
-            sourceUrl,
-            tags: currentTags,
-            notes
+        const sourceUrl = document.getElementById("sourceUrl").value;
+        const notes = document.getElementById("notes").value;
+
+        parent.postMessage(
+          {
+            pluginMessage: {
+              type: "save-metadata",
+              sourceUrl,
+              tags: currentTags,
+              notes,
+            },
+          },
+          "*"
+        );
+
+        // Show success message
+        displayMessage("Metadata saved successfully!", "success");
+
+        // Hide draft indicator
+        document.getElementById("status-indicator").style.display = "none";
+        document.getElementById("landscape-status-indicator").style.display =
+          "none";
+
+        // Refresh the elements list if we're in explore tab
+        if (activeTab === "explore") {
+          parent.postMessage(
+            { pluginMessage: { type: "get-all-elements" } },
+            "*"
+          );
+        }
+      }
+
+      // Autosave draft
+      function autosaveDraft() {
+        if (!preferences.autosave) return;
+
+        // Clear any existing timer
+        if (autosaveTimer) {
+          clearTimeout(autosaveTimer);
+        }
+
+        // Set new timer to save after a short delay
+        autosaveTimer = setTimeout(() => {
+          // Get values from form
+          const sourceUrl = document.getElementById("sourceUrl").value;
+          const notes = document.getElementById("notes").value;
+
+          parent.postMessage(
+            {
+              pluginMessage: {
+                type: "save-draft",
+                sourceUrl,
+                tags: currentTags,
+                notes,
+              },
+            },
+            "*"
+          );
+
+          // Show draft indicator
+          document.getElementById("status-indicator").style.display = "flex";
+          document.getElementById("landscape-status-indicator").style.display =
+            "flex";
+        }, 1000); // 1 second delay
+      }
+
+      // Show toast notification
+      function showToast(message) {
+        const toast = document.getElementById("toast");
+        const toastMessage = document.getElementById("toast-message");
+        toastMessage.textContent = message;
+
+        toast.classList.add("show");
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 2000);
+      }
+
+      // Update filter tags in explore tab
+      function updateFilterTags() {
+        const filterContainer = document.getElementById("filterTagsContainer");
+        const landscapeFilterContainer = document.getElementById(
+          "landscapeFilterTagsContainer"
+        );
+
+        // Clear existing tags
+        filterContainer.innerHTML = "";
+        landscapeFilterContainer.innerHTML = "";
+
+        // Create filter tags from all unique tags
+        allTags.forEach((tag) => {
+          // Portrait filter tag
+          const filterTag = document.createElement("div");
+          filterTag.className = "filter-tag";
+          filterTag.textContent = tag;
+          filterTag.dataset.tag = tag;
+
+          if (activeFilterTags.includes(tag)) {
+            filterTag.classList.add("active");
           }
-        }, '*');
-        
-        // Show draft indicator
-        document.getElementById('status-indicator').style.display = 'flex';
-        document.getElementById('landscape-status-indicator').style.display = 'flex';
-      }, 1000); // 1 second delay
-    }
-    
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      const toastMessage = document.getElementById('toast-message');
-      toastMessage.textContent = message;
-      
-      toast.classList.add('show');
-      
-      setTimeout(() => {
-        toast.classList.remove('show');
-      }, 2000);
-    }
-  </script>
-</body>
+
+          filterTag.addEventListener("click", () => {
+            toggleFilterTag(tag);
+          });
+
+          filterContainer.appendChild(filterTag);
+
+          // Landscape filter tag
+          const landscapeFilterTag = filterTag.cloneNode(true);
+          landscapeFilterTag.addEventListener("click", () => {
+            toggleFilterTag(tag);
+          });
+
+          landscapeFilterContainer.appendChild(landscapeFilterTag);
+        });
+      }
+
+      // Toggle filter tag
+      function toggleFilterTag(tag) {
+        if (activeFilterTags.includes(tag)) {
+          activeFilterTags = activeFilterTags.filter((t) => t !== tag);
+        } else {
+          activeFilterTags.push(tag);
+        }
+
+        // Update UI
+        document
+          .querySelectorAll(`.filter-tag[data-tag="${tag}"]`)
+          .forEach((el) => {
+            el.classList.toggle("active");
+          });
+
+        // Filter elements
+        filterElements();
+      }
+
+      // Filter elements based on active filter tags and search query
+      function filterElements() {
+        const searchQuery = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const landscapeSearchQuery = document
+          .getElementById("landscapeSearchInput")
+          .value.toLowerCase();
+
+        // Filter elements based on tags and search query
+        let filteredElements = allElements;
+
+        if (activeFilterTags.length > 0) {
+          filteredElements = filteredElements.filter((element) => {
+            return activeFilterTags.every((tag) => element.tags.includes(tag));
+          });
+        }
+
+        if (searchQuery) {
+          filteredElements = filteredElements.filter((element) => {
+            return (
+              element.nodeName.toLowerCase().includes(searchQuery) ||
+              (element.sourceUrl &&
+                element.sourceUrl.toLowerCase().includes(searchQuery)) ||
+              element.tags.some((tag) =>
+                tag.toLowerCase().includes(searchQuery)
+              ) ||
+              (element.notes &&
+                element.notes.toLowerCase().includes(searchQuery))
+            );
+          });
+        }
+
+        // Render filtered elements
+        renderElementsList(filteredElements);
+      }
+
+      // Render elements list in explore tab
+      function renderElementsList(filteredElements = null) {
+        const elements = filteredElements || allElements;
+        const elementsList = document.getElementById("elements-list");
+        const landscapeElementsList = document.getElementById(
+          "landscape-elements-list"
+        );
+
+        // Clear loading indicators
+        elementsList.innerHTML = "";
+        landscapeElementsList.innerHTML = "";
+
+        if (elements.length === 0) {
+          const emptyState = document.createElement("div");
+          emptyState.className = "empty-state";
+          emptyState.innerHTML = `
+      <div class="empty-state-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
+          <line x1="16" y1="8" x2="2" y2="22"></line>
+          <line x1="17.5" y1="15" x2="9" y2="15"></line>
+        </svg>
+      </div>
+      <div class="empty-state-text">No elements found</div>
+      <div class="empty-state-subtext">Try adjusting your search or filters</div>
+    `;
+
+          elementsList.appendChild(emptyState);
+          landscapeElementsList.appendChild(emptyState.cloneNode(true));
+          return;
+        }
+
+        // Create elements list items
+        elements.forEach((element) => {
+          // Create element list item using template
+          const templateElement = document.getElementById(
+            "element-list-item-template"
+          );
+          const elementItem = document.importNode(
+            templateElement.content,
+            true
+          );
+
+          // Set element data
+          elementItem.querySelector(".element-list-name").textContent =
+            element.nodeName;
+
+          // Add tags
+          const tagsContainer = elementItem.querySelector(".element-list-tags");
+          element.tags.slice(0, 3).forEach((tag) => {
+            const tagElement = document.createElement("span");
+            tagElement.className = "element-list-tag";
+            tagElement.textContent = tag;
+            tagsContainer.appendChild(tagElement);
+          });
+
+          if (element.tags.length > 3) {
+            const moreTag = document.createElement("span");
+            moreTag.className = "element-list-tag";
+            moreTag.textContent = `+${element.tags.length - 3} more`;
+            tagsContainer.appendChild(moreTag);
+          }
+
+          // Add click event to navigate to element
+          const listItem = elementItem.querySelector(".element-list-item");
+          listItem.addEventListener("click", () => {
+            selectElement(element);
+          });
+
+          // Add click event to go-to button
+          const goToBtn = elementItem.querySelector(".element-list-goto");
+          goToBtn.addEventListener("click", (e) => {
+            e.stopPropagation(); // Prevent triggering the parent click
+            navigateToElement(element.nodeId);
+          });
+
+          // Add the element to the list
+          elementsList.appendChild(elementItem);
+
+          // Create a clone for landscape mode
+          const landscapeElementItem = listItem.cloneNode(true);
+          landscapeElementItem.addEventListener("click", () => {
+            selectElement(element);
+          });
+
+          landscapeElementItem
+            .querySelector(".element-list-goto")
+            .addEventListener("click", (e) => {
+              e.stopPropagation();
+              navigateToElement(element.nodeId);
+            });
+
+          landscapeElementsList.appendChild(landscapeElementItem);
+        });
+
+        // Add search functionality for explore tab
+        setupSearch();
+      }
+
+      // Setup search functionality
+      function setupSearch() {
+        const searchInput = document.getElementById("searchInput");
+        const landscapeSearchInput = document.getElementById(
+          "landscapeSearchInput"
+        );
+
+        searchInput.addEventListener("input", filterElements);
+        landscapeSearchInput.addEventListener("input", function () {
+          searchInput.value = this.value;
+          filterElements();
+        });
+      }
+
+      // Select element from list
+      function selectElement(element) {
+        // Show element details
+        const detailElement = document.getElementById("element-detail");
+        detailElement.innerHTML = "";
+
+        // Create element detail using template
+        const templateElement = document.getElementById(
+          "element-detail-template"
+        );
+        const detailContent = document.importNode(
+          templateElement.content,
+          true
+        );
+
+        // Set element data
+        detailContent.querySelector(".element-detail-title").textContent =
+          element.nodeName;
+        detailContent.querySelector(".element-detail-type").textContent =
+          "Element";
+
+        // Source URL
+        if (element.sourceUrl) {
+          detailContent.querySelector(".detail-source-url").textContent =
+            element.sourceUrl;
+          detailContent.querySelector(".detail-url-actions").style.display =
+            "flex";
+
+          // Open URL button
+          detailContent
+            .querySelector(".detail-open-url")
+            .addEventListener("click", () => {
+              window.open(element.sourceUrl, "_blank");
+            });
+
+          // Copy URL button
+          detailContent
+            .querySelector(".detail-copy-url")
+            .addEventListener("click", () => {
+              navigator.clipboard.writeText(element.sourceUrl).then(() => {
+                showToast("URL copied to clipboard");
+              });
+            });
+        } else {
+          detailContent.querySelector(".detail-source-url").textContent =
+            "No source URL";
+          detailContent.querySelector(".detail-url-actions").style.display =
+            "none";
+        }
+
+        // Tags
+        const tagsContainer = detailContent.querySelector(".detail-tags");
+        if (element.tags && element.tags.length > 0) {
+          element.tags.forEach((tag) => {
+            const tagElement = document.createElement("span");
+            tagElement.className = "detail-tag";
+            tagElement.textContent = tag;
+            tagsContainer.appendChild(tagElement);
+          });
+        } else {
+          tagsContainer.textContent = "No tags";
+        }
+
+        // Notes
+        const notesElement = detailContent.querySelector(".detail-notes");
+        if (element.notes) {
+          notesElement.textContent = element.notes;
+        } else {
+          notesElement.textContent = "No notes";
+        }
+
+        // Last modified
+        const lastModifiedElement = detailContent.querySelector(
+          ".detail-last-modified"
+        );
+        if (element.lastModified) {
+          const date = new Date(element.lastModified);
+          lastModifiedElement.textContent = date.toLocaleString();
+        } else {
+          lastModifiedElement.textContent = "Unknown";
+        }
+
+        // Navigate to element button
+        detailContent
+          .querySelector(".go-to-element")
+          .addEventListener("click", () => {
+            navigateToElement(element.nodeId);
+          });
+
+        // Add the detail to the container
+        detailElement.appendChild(detailContent);
+
+        // Mark the selected item in the list
+        document.querySelectorAll(".element-list-item").forEach((item) => {
+          item.classList.remove("active");
+        });
+
+        // Find the items matching this element and mark them as active
+        document.querySelectorAll(".element-list-item").forEach((item) => {
+          if (
+            item.querySelector(".element-list-name").textContent ===
+            element.nodeName
+          ) {
+            item.classList.add("active");
+          }
+        });
+      }
+
+      // Navigate to Figma element
+      function navigateToElement(nodeId) {
+        parent.postMessage(
+          {
+            pluginMessage: {
+              type: "navigate-to-node",
+              nodeId,
+            },
+          },
+          "*"
+        );
+      }
+
+      // Format date
+      function formatDate(timestamp) {
+        if (!timestamp) return "N/A";
+
+        const date = new Date(timestamp);
+        return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+      }
+    </script>
+
+    <script src="script.js"></script>
+  </body>
 </html>

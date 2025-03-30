@@ -1,4 +1,4 @@
-figma.showUI(__html__, { width: 320, height: 480, themeColors: true });
+figma.showUI(__html__, { width: 320, height: 500, themeColors: true });
 
 // Get user preferences or set defaults
 async function getUserPreferences() {
@@ -94,6 +94,7 @@ figma.ui.onmessage = async (msg) => {
         type: 'draft-loaded',
         data: draft,
         nodeName: node.name || 'Unnamed Layer',
+        nodeId: node.id,
         message: 'Continuing from your unsaved draft'
       });
       return;
@@ -106,13 +107,15 @@ figma.ui.onmessage = async (msg) => {
       figma.ui.postMessage({ 
         type: 'metadata-loaded',
         data: metadata,
-        nodeName: node.name || 'Unnamed Layer'
+        nodeName: node.name || 'Unnamed Layer',
+        nodeId: node.id
       });
     } else {
       figma.ui.postMessage({ 
         type: 'new-element',
         message: 'Add metadata to this element',
-        nodeName: node.name || 'Unnamed Layer'
+        nodeName: node.name || 'Unnamed Layer',
+        nodeId: node.id
       });
     }
   }
@@ -137,6 +140,39 @@ figma.ui.onmessage = async (msg) => {
     });
   }
   
+  if (msg.type === 'get-all-elements') {
+    // Get all elements with metadata
+    const allKeys = await figma.clientStorage.keysAsync();
+    const metadataKeys = allKeys.filter(key => key.startsWith('metadata-'));
+    
+    // Build the elements array with metadata
+    const elements = [];
+    
+    for (const key of metadataKeys) {
+      const nodeId = key.replace('metadata-', '');
+      const metadata = await figma.clientStorage.getAsync(key);
+      
+      // Try to find the node in the document
+      const node = findNodeById(nodeId);
+      
+      if (node && metadata) {
+        elements.push({
+          nodeId: nodeId,
+          nodeName: node.name || 'Unnamed Layer',
+          sourceUrl: metadata.sourceUrl || '',
+          tags: metadata.tags || [],
+          notes: metadata.notes || '',
+          lastModified: metadata.lastModified || null
+        });
+      }
+    }
+    
+    figma.ui.postMessage({
+      type: 'all-elements',
+      elements: elements
+    });
+  }
+  
   if (msg.type === 'update-preferences') {
     await figma.clientStorage.setAsync('designtrail-preferences', msg.preferences);
     
@@ -144,7 +180,7 @@ figma.ui.onmessage = async (msg) => {
     if (msg.preferences.layout === 'landscape') {
       figma.ui.resize(640, 320);
     } else {
-      figma.ui.resize(320, 480);
+      figma.ui.resize(320, 500);
     }
   }
   
@@ -155,7 +191,29 @@ figma.ui.onmessage = async (msg) => {
       Math.max(300, Math.min(600, msg.height))
     );
   }
+  
+  // Handle navigation to node
+  if (msg.type === 'navigate-to-node') {
+    const node = findNodeById(msg.nodeId);
+    if (node) {
+      // Select the node
+      figma.currentPage.selection = [node];
+      
+      // Scroll and zoom into view
+      figma.viewport.scrollAndZoomIntoView([node]);
+      
+      // Notify the user
+      figma.notify(`Navigated to "${node.name}"`);
+    } else {
+      figma.notify('Element not found in the current document', { error: true });
+    }
+  }
 };
+
+// Find a node by ID in the document
+function findNodeById(id) {
+  return figma.currentPage.findOne(node => node.id === id);
+}
 
 // Listen for selection changes
 figma.on('selectionchange', () => {
